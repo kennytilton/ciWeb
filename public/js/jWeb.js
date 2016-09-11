@@ -4,4 +4,13 @@
  * and open the template in the editor.
  */
 
+function jWebTest(root) {
+    root.innerHTML = 'jWeb Rizing!';
+}
 
+/*
+class HTag extends Model {
+    constructor(parent, name, icells) {
+        super(parent, name, icells);
+    }
+*/

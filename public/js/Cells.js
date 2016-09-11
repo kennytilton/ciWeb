@@ -6,6 +6,7 @@
  */
 
 // --- utils ---
+
 function clg() {
     console.log(Array.from(arguments).join(","));
 }
@@ -540,7 +541,8 @@ class Cell {
     observe( vPrior, tag) {
         //console.log('observe entry', vPrior);
         if (this.observer) {
-            //console.log('observer', this.observer.toString());
+            console.log('observe-ing '+ this.name +'/'+ this.md.name);
+            console.log('observer', this.observer.toString());
             this.observer(this.name, this.md, this.pv, vPrior, this);
         }
     }
@@ -605,7 +607,13 @@ class Cell {
     fm (what, how, key) { // short for "find model"
         if (!what) return;
         if (!this.md) throw `Family search attempted from Cell ${this} sans md property`;
-        this.md.fm( what, how, key);
+        return this.md.fm( what, how, key);
+    }
+    fmd (what, key, how) {
+        return this.fm( what, {mep: false, upp: false, insidep: true}, key);
+        return this.fmd( what
+                        , key || (typeof what === 'string' ? what : null)
+                        , how);
     }
 }
 
@@ -663,7 +671,8 @@ function cIe(value) {
     return new Cell(value, null, true, true, null);
 }
 function obsDbg (name, me, newv, priorv, c) {
-    console.log(`OBS: ${name} now ${newv} (was ${priorv})`);
+    console.log(name, me.name, newv);
+//    console.log(`OBS: ${name} now ${newv} (was ${priorv})`);
 }
 
 //module.exports.Cell = Cell;
