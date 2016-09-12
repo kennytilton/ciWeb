@@ -18,7 +18,7 @@ function find(x,y) {
         return x;
     }
 }
-Array.prototype.somex = function(test) {
+Array.prototype.somex = function (test) {
     for (let [_,elt] of this.entries()) {
         let res = test(elt);
         if (res) {
@@ -81,7 +81,15 @@ var deferChanges = false;
 var clientQHandler = null;
 var gCustomPropagator = null;
 var gWithinIntegrity = false;
+var gSlotObserver = {}; //keys will be slot (aka property) names
 
+function gSlotObserverDef (slot, obs) {
+    let xo = gSlotObserver[slot];
+    if (xo) {
+        clg(`gSlotObserverDef overwriting $(slot) observer`);
+    }
+    gSlotObserver[slot] = obs;
+}
 const qNotify = new ArrayQueue();
 const qAwaken = new ArrayQueue();
 const qClient = new ArrayQueue();
@@ -297,10 +305,10 @@ class Cell {
             //clg('awk pulses', gpulse(),this.pulseObserved);
             if (gpulse() > this.pulseObserved) {
                 // apparently double calls have occurred
-                if (this.md) {
-                    clg('am I zapping '+this.name);
+                /*if (this.md) {
+                    clg('am I zapping??? '+this.name);
                     this.md[this.name] = this.pv;
-                }
+                }*/
                 //clg('awakenin obs!!!',this.name);
                 this.observe(undefined,'awaken');
                 this.ephemeralReset();
@@ -543,11 +551,17 @@ class Cell {
     
     // --- the model alters the outside world (or itself, if necessary) ---
     observe( vPrior, tag) {
-        //console.log('observe entry', vPrior);
+       console.log('observe entry', vPrior);
         if (this.observer) {
-            //console.log('observe-ing '+ this.name +'/'+ this.md.name);
+            console.log('this observe-ing '+ this.name +'/'+ this.md.name);
             //console.log('observer', this.observer.toString());
             this.observer(this.name, this.md, this.pv, vPrior, this);
+        } else {
+            let obs = gSlotObserver[this.name];
+            if (obs) {
+                clg('gSlot observe! '+this.name);
+                obs(this.name, this.md, this.pv, vPrior, this);
+            } else clg(`no slot obs either for ${this.name}`);
         }
     }
 

@@ -50,7 +50,7 @@ class Model {
                 value.name = slot;
                 //clg('md cell named '+slot+' gets md named '+this.name);
                 value.md = this; // md aka model
-                //clg('md cell named '+slot+' has md named '+value.md.name);
+                clg('md cell named '+slot+' has md named '+value.md.name);
                 this.cells[slot] = value;
                 Object.defineProperty(this
                     , slot, {
@@ -83,18 +83,16 @@ class Model {
     awaken() {
         if (this.state !== kNascent) return this;
         this.state = kAwakening;
-        //clg(`md awaken ${this.name}`);
+        clg(`md awaken ${this.name}`);
         for (let slot in this.cells) {
             let c = this.cells[slot];
-            console.assert(c.md,`No md for cell ${c.name} at md awaken`)
+            console.assert(c.md,`No md for cell ${c.name} at md awaken`);
+            clg(`md wakes ${c.name} st=${c.state.toString()}`);
             let lz = find(c.lazy, [true, kAlways, kUntilAsked]);
             if (lz) {
                 ; //clg('lazy!!!!', c.lazy, lz);
             } else {
-                if (c.state === kNascent) {
-                    //clg(`md awaken ${this.name} calls cawaken ${c.name} md ${c.md}`);
-                    c.awaken();
-                }
+                c.awaken();
             }
         }
         this.state = kAwake;
@@ -185,3 +183,20 @@ class Model {
 }
 
 //module.exports.Model = Model;
+
+
+function mkm( par, id, props, kids) {
+    //clg('mkm ', id, par? par.name:'nopar',kids===null);
+    if (id !=='uni') {
+        console.warn(par,'null par for '+id);
+    }
+    opts = Object.assign({}, props
+            , kids ? {kids: typeof kids==='function'?
+                                cF( c=>{//clg(' making kids!!! '+c.md.name);
+                                        let kds = kids(c);
+                                        //clg('got kids', kds !== null, typeof kds);
+                                        return kds;})
+                                : kids} // do these need par set?
+                : null);
+    return new Model( par, id, opts);
+}
