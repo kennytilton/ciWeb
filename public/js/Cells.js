@@ -287,8 +287,10 @@ class Cell {
     }
 
     awaken() {
+        console.assert(this.md,'whoa no md for '+this.name); // todo lose this for pure
         if (this.rule) {
             if (!this.currentp()) {
+                //clg(`calcnset ${this.name} of ${this.md.name}`);
                 this.calcNSet('c-awaken');
             }
         } else {
@@ -296,6 +298,7 @@ class Cell {
             if (gpulse() > this.pulseObserved) {
                 // apparently double calls have occurred
                 if (this.md) {
+                    clg('am I zapping '+this.name);
                     this.md[this.name] = this.pv;
                 }
                 //clg('awakenin obs!!!',this.name);
@@ -305,11 +308,12 @@ class Cell {
         }
     } // --- coming to life JIT or forced
 
+
     // --- the offical slot access API
     slotValue() {
         let rv = undefined
             , self = this;
-        //clg('cget depender in '+depender);
+        //clg('slotValue entry '+self.name+' has md '+!self.md);
         withIntegrity(null,null, function () {
             let vPrior = self.pv;
             rv = self.ensureValueIsCurrent( 'c-read', null);
@@ -435,7 +439,7 @@ class Cell {
         try {
             callStack.push(this);
             this.unlinkFromUsed('pre-rule-clear');
-            //T.clg('calling '+this.rule.toString());
+            //clg(`calling ${this.name} rule with md ${this.md} `+this.rule.toString());
             return this.rule(this);
         } finally {
             callStack.pop();
@@ -447,7 +451,7 @@ class Cell {
     // --- state changes, from external assign or recalculation
     valueAssume( newValue, propCode) {
         let self = this;
-        //clg('val ass etry', newValue);
+        //clg('val ass etry', this.name, newValue);
         withoutCDependency(()=>{
             //clg('valass entry');
            let priorValue = self.pv
@@ -541,8 +545,8 @@ class Cell {
     observe( vPrior, tag) {
         //console.log('observe entry', vPrior);
         if (this.observer) {
-            console.log('observe-ing '+ this.name +'/'+ this.md.name);
-            console.log('observer', this.observer.toString());
+            //console.log('observe-ing '+ this.name +'/'+ this.md.name);
+            //console.log('observer', this.observer.toString());
             this.observer(this.name, this.md, this.pv, vPrior, this);
         }
     }

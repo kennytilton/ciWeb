@@ -48,12 +48,15 @@ class Model {
 
             if (value instanceof Cell) {
                 value.name = slot;
+                //clg('md cell named '+slot+' gets md named '+this.name);
                 value.md = this; // md aka model
+                //clg('md cell named '+slot+' has md named '+value.md.name);
                 this.cells[slot] = value;
                 Object.defineProperty(this
                     , slot, {
                         enumerable: true
                         , get: ()=> {
+                            //clg('getteringhh '+value.name+','+value.md);
                             return value.slotValue();
                         }
                         , set: (newv)=>{
@@ -80,13 +83,16 @@ class Model {
     awaken() {
         if (this.state !== kNascent) return this;
         this.state = kAwakening;
+        //clg(`md awaken ${this.name}`);
         for (let slot in this.cells) {
             let c = this.cells[slot];
+            console.assert(c.md,`No md for cell ${c.name} at md awaken`)
             let lz = find(c.lazy, [true, kAlways, kUntilAsked]);
             if (lz) {
-                clg('lazy!!!!', c.lazy, lz);
+                ; //clg('lazy!!!!', c.lazy, lz);
             } else {
                 if (c.state === kNascent) {
+                    //clg(`md awaken ${this.name} calls cawaken ${c.name} md ${c.md}`);
                     c.awaken();
                 }
             }
@@ -101,16 +107,16 @@ class Model {
     }
     fm( what, how, key) {
         // todo an up-only option to just search ascendants
-//        if (how) {
-//            clg(how.insidep);
-//            clg('fm mustp' + how.mustp);
-//            clg(`fm entry this=${this.name} mustp=${how.mustp}`);
-//        }
+        if (false) { //(how) {
+            clg(how.insidep);
+            clg('fm mustp' + how.mustp);
+            clg(`fm entry this=${this.name} mustp=${how.mustp}`);
+        }
         let found = null;
         if (key) {
             let known = this.others[key];
             if (known) {
-                clg(`md.fm reusing known ${key}`);
+                //clg(`md.fm reusing known ${key}`);
                 return known;
             }
         }
@@ -152,7 +158,7 @@ class Model {
         return m;
     }
     fmTv( what, how) {
-//        clg(`fmTv entry ${this.name} up=${how.upp} mep=${how.mep} inside=${how.insidep}`);
+        //clg(`fmTv entry ${this.name} upp=${how.upp} mep=${how.mep} inside=${how.insidep}`);
 //        clg(`fmTv entry par=${this.par && this.par.name}`);
 //        clg(`fmTv entry kids=${this.kids}`);
         let self = this;
@@ -165,7 +171,7 @@ class Model {
                         if (found) return found;
                     })) ||
                 (function () {
-                    //clg(`fmTv considers up ${how.upp} par=${self.par && self.par.name}`);
+                    //clg(`fmTv ${self.name} considers upp ${how.upp} par=${self.par}`);
                     return (how.upp
                             && self.par
                             && self.par.fmTv( what, Object.assign({}, how
