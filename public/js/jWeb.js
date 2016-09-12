@@ -1,6 +1,6 @@
 
-function shazzam() {
-    clg('shazzam!!!!');
+function shazzam(deets) {
+    clg('shazzam!!!!'+ deets||'nada');
 }
 
 
@@ -21,7 +21,7 @@ function jWebTest(hostID) {
                                 )
                     , h4(`Semi-fine print`
                         , {attrs:
-                            {onclick: "shazzam()"
+                            {onclick: "shazzam('fine print')"
                             , style:
                                 {color:'#0f0'
                                 , 'background-color': '#000'

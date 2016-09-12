@@ -15,15 +15,13 @@ function attrsBuild(raw) {
             let attrs='', first=true;
             for (var key in raw) {
                 if (raw.hasOwnProperty(key)) {
-                    clg(`abuild sees key ${key}, delim ${delimiter}, value ${raw[key]}`);
+                    //clg(`abuild sees key ${key}, delim ${delimiter}, value ${raw[key]}`);
                     let nextDelim = delimiter===' '? '=':':';
                     if (!first) attrs += delimiter;
                     if (nextDelim==='=') {
-                        attrs += `${key}="${objAttrs(raw[key]
-                                                    , nextDelim)}"`;
+                        attrs += `${key}="${objAttrs(raw[key], ';')}"`;
                     } else {
-                        attrs += `${key}:${objAttrs(raw[key]
-                                                    , nextDelim)}`;
+                        attrs += `${key}:${objAttrs(raw[key], nextDelim)}`;
                     }
                     first = false;
                 }
