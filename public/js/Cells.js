@@ -209,19 +209,19 @@ function withChg(id, fn) {
 }
 
 // --- internal Cell states
-const kUnbound = Symbol("unbound");
-const kUncurrent = Symbol("uncurrent");
-const kValid = Symbol("valid");
-const kAwake = Symbol("c-awake");
-const kQuiesced = Symbol("c-quiesced");
-const kNascent = Symbol("nascent");
-const kOptimizedAwayp = Symbol("optimized-away");
-const kOptimizeWhenValued = Symbol("optimize-when-valued");
+const kUnbound = "unbound";
+const kUncurrent = "uncurrent";
+const kValid = "valid";
+const kAwake = "c-awake";
+const kQuiesced = "c-quiesced";
+const kNascent = "nascent";
+const kOptimizedAwayp = "optimized-away";
+const kOptimizeWhenValued = "optimize-when-valued";
 
 // lazy options
-const kOnceAsked = Symbol("lazy-once-asked");
-const kUntilAsked = Symbol("lazy-until-asked");
-const kAlways =Symbol("lazy-always");
+const kOnceAsked = "lazy-once-asked";
+const kUntilAsked = "lazy-until-asked";
+const kAlways ="lazy-always";
 
 // --- Cells ----------------------
 
@@ -551,17 +551,17 @@ class Cell {
     
     // --- the model alters the outside world (or itself, if necessary) ---
     observe( vPrior, tag) {
-       console.log('observe entry', vPrior);
+       //console.log('observe entry', vPrior);
         if (this.observer) {
-            console.log('this observe-ing '+ this.name +'/'+ this.md.name);
+            //console.log('this observe-ing '+ this.name +'/'+ this.md.name);
             //console.log('observer', this.observer.toString());
             this.observer(this.name, this.md, this.pv, vPrior, this);
         } else {
             let obs = gSlotObserver[this.name];
             if (obs) {
-                clg('gSlot observe! '+this.name);
+                //clg('gSlot observe! '+this.name);
                 obs(this.name, this.md, this.pv, vPrior, this);
-            } else clg(`no slot obs either for ${this.name}`);
+            }// else clg(`no slot obs either for ${this.name}`);
         }
     }
 

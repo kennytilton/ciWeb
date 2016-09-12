@@ -13,10 +13,9 @@ function ast (test, msg) {
 
 //var UU = require('node-uuid');
 
-
-const kAwakening = Symbol("md-awakening");
-const kDoomed = Symbol("md-doomed");
-const kDead = Symbol("md-dead");
+const kAwakening = "md-awakening";
+const kDoomed = "md-doomed";
+const kDead = "md-dead";
 
 var sid = 0; // aka "serial ID"
 
@@ -50,7 +49,7 @@ class Model {
                 value.name = slot;
                 //clg('md cell named '+slot+' gets md named '+this.name);
                 value.md = this; // md aka model
-                clg('md cell named '+slot+' has md named '+value.md.name);
+                //clg('md cell named '+slot+' has md named '+value.md.name);
                 this.cells[slot] = value;
                 Object.defineProperty(this
                     , slot, {
@@ -83,11 +82,11 @@ class Model {
     awaken() {
         if (this.state !== kNascent) return this;
         this.state = kAwakening;
-        clg(`md awaken ${this.name}`);
+        //clg(`md awaken ${this.name}`);
         for (let slot in this.cells) {
             let c = this.cells[slot];
             console.assert(c.md,`No md for cell ${c.name} at md awaken`);
-            clg(`md wakes ${c.name} st=${c.state.toString()}`);
+            //clg(`md wakes ${c.name} st=${c.state.toString()}`);
             let lz = find(c.lazy, [true, kAlways, kUntilAsked]);
             if (lz) {
                 ; //clg('lazy!!!!', c.lazy, lz);
@@ -188,7 +187,7 @@ class Model {
 function mkm( par, id, props, kids) {
     //clg('mkm ', id, par? par.name:'nopar',kids===null);
     if (id !=='uni') {
-        console.warn(par,'null par for '+id);
+        //if (!par) {console.warn('null par for '+id);}
     }
     opts = Object.assign({}, props
             , kids ? {kids: typeof kids==='function'?

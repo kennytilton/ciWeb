@@ -1,0 +1,23 @@
+change Symbols to simple constants
+
+get back to optimizing away
+
+add observer on kids and worry about leaks et al
+
+import? export?
+
+better way to do h1,h2...
+
+function makeActionCreator(type, ...argNames) {
+  return function(...args) {
+    let action = { type }
+    argNames.forEach((arg, index) => {
+      action[argNames[index]] = args[index]
+    })
+    return action
+  }
+}
+
+const ADD_TODO = 'ADD_TODO'
+export const addTodo = makeActionCreator(ADD_TODO, 'todo')
+

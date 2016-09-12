@@ -3,36 +3,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-gSlotObserverDef('html', (s, md, newv)=> {
-   clg(`${md.name} html obs!!!!!! `+ newv);
-   if (md.dom)
-        md.dom.innerHTML = newv; 
-});
 
-function rockH(c) {
-    let tag = c.md.tag;
-    ast(tag);
-    return `<${tag}>${c.md.content || kidsH(c.md)}</${tag}>`;
+function jWebTest(hostID) {
+    let host = document.getElementById(hostID);
+    // no need to return this (unless it gets GCed
+    ast(host);
+    tag('section', {
+        id: 'ciWeb '+ host.id
+        , dom: host
+        , attrs: 'style="background-color:#ff0;padding:6px"' // {style: 'background-color:#ff0;'}
+        , kids: cF(c=> {
+            return [ h1('Beezelbub!')
+                    , h3(`jWeb! ${hostID}`
+                        , {attrs: {style: 'color:#f00;background-color:#fff;margin:4px'}})
+                    , h4(`Semi-fine print`
+                        , {attrs: {style: {color:'#0f0'
+                                        , 'background-color': '#000'
+                                        , padding:"12px"}}})
+                        ];
+        })
+    });
 }
 
-function kidsH(md) {
-    if (md.kids) {
-       return md.kids.reduce((pv, md)=>{ return pv+md.html;}, 'cool:');
-   } else {
-       return `${md.name} has no kids`;
-   }
-}
-
-function jWebTest(host) {
-    let app = mkm(null,'jWebTest'
-                , {dom: host
-                    , tag: 'div'
-                    , html: cF(rockH)}
-                , c=>{return [mkm(c.md,'myh3'
-                        , {tag:'h3'
-                            , content: 'jWeb!!!!!'
-                            ,html:cF(rockH)})]});
-}
 
 /*
 class HTag extends Model {
