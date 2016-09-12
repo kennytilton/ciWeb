@@ -684,12 +684,13 @@ function cI(value, options) {
     return Object.assign(new Cell(value, null, true, false, null)
         , options);
 }
-function cIe(value) {
+function cIe(value, options) {
     // ephemeral input cell
-    return new Cell(value, null, true, true, null);
+    return Object.assign(new Cell(value, null, true, true, null)
+        , options);
 }
 function obsDbg (name, me, newv, priorv, c) {
-    console.log(name, me.name, newv);
+    console.log(`obsDbg! ${name} ${me.name} ${newv}`);
 //    console.log(`OBS: ${name} now ${newv} (was ${priorv})`);
 }
 

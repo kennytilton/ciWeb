@@ -39,9 +39,10 @@ function rockH(c) {
     let tag = c.md.tag
         , rawAttrs = c.md.attrs;
     ast(tag);
-    return `<${tag} ${attrsBuild(rawAttrs)}>${c.md.content || kidsH(c.md)}</${tag}>`;
+    clg(`rockh sees id `+c.md.id);
+    return `<${tag} id="${c.md.id}" ${attrsBuild(rawAttrs)}>${c.md.content || kidsH(c.md)}</${tag}>`;
 }
-
+//id="${c.md.id} 
 function kidsH(md) {
     if (md.kids) {
        return md.kids.reduce((pv, md)=>{ return pv+md.html;},'');
