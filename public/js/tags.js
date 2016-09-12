@@ -1,7 +1,7 @@
 
 
 gSlotObserverDef('html', (s, md, newv)=> {
-    clg(`${md.name} html obs!!!!!! `+ newv);
+    //clg(`${md.name} html obs!!!!!! `+ newv);
     if (md.dom)
         md.dom.innerHTML = newv; 
 });
@@ -12,17 +12,26 @@ function attrsBuild(raw) {
         if (typeof raw === 'string') {
             return raw;
         } else {
-            let attrs='';
+            let attrs='', first=true;
             for (var key in raw) {
                 if (raw.hasOwnProperty(key)) {
-                    clg(`abuild sees key ${key}, value ${raw[key]}`);
-                    attrs += `${key}${delimiter}${objAttrs(raw[key],':')};`;
+                    clg(`abuild sees key ${key}, delim ${delimiter}, value ${raw[key]}`);
+                    let nextDelim = delimiter===' '? '=':':';
+                    if (!first) attrs += delimiter;
+                    if (nextDelim==='=') {
+                        attrs += `${key}="${objAttrs(raw[key]
+                                                    , nextDelim)}"`;
+                    } else {
+                        attrs += `${key}:${objAttrs(raw[key]
+                                                    , nextDelim)}`;
+                    }
+                    first = false;
                 }
             }
             return attrs;
         }
     };
-    let a = objAttrs(raw,'=');
+    let a = objAttrs(raw,' ');
 
     if (a) clg('final attrs!!!!!!!! '+a);
     return a;
@@ -37,7 +46,7 @@ function rockH(c) {
 
 function kidsH(md) {
     if (md.kids) {
-       return md.kids.reduce((pv, md)=>{ return pv+md.html;}, 'cool:');
+       return md.kids.reduce((pv, md)=>{ return pv+md.html;},'');
    } else {
        return `${md.name} has no kids`;
    }
@@ -76,4 +85,7 @@ function h5(content, initargs, parent) {
 }
 function h6(content, initargs, parent) {
     return tag('h6', Object.assign( {content: content}, initargs), parent);
+}
+function button(content, initargs, parent) {
+    return tag('button', Object.assign( {content: content}, initargs), parent);
 }

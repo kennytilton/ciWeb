@@ -1,8 +1,8 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
+function shazzam() {
+    clg('shazzam!!!!');
+}
+
 
 function jWebTest(hostID) {
     let host = document.getElementById(hostID);
@@ -11,15 +11,22 @@ function jWebTest(hostID) {
     tag('section', {
         id: 'ciWeb '+ host.id
         , dom: host
-        , attrs: 'style="background-color:#ff0;padding:6px"' // {style: 'background-color:#ff0;'}
+        , attrs: 'style="background-color:#ff0;padding:6px"'
         , kids: cF(c=> {
-            return [ h1('Beezelbub!')
-                    , h3(`jWeb! ${hostID}`
-                        , {attrs: {style: 'color:#f00;background-color:#fff;margin:4px'}})
+            return [ h1(`Beezelbub!`, {
+                        attrs: 'onclick="shazzam()"'
+                    })
+                    , h3(`jWeb zapped ${hostID}`
+                        , {attrs: {style: 'color:#f00;background-color:#fff;margin:4px'}}
+                                )
                     , h4(`Semi-fine print`
-                        , {attrs: {style: {color:'#0f0'
-                                        , 'background-color': '#000'
-                                        , padding:"12px"}}})
+                        , {attrs:
+                            {onclick: "shazzam()"
+                            , style:
+                                {color:'#0f0'
+                                , 'background-color': '#000'
+                                , padding:"18px"}}})
+                    //, button('GoGo')
                         ];
         })
     });
