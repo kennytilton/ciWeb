@@ -1,18 +1,15 @@
 
 
 gSlotObserverDef('html', (s, md, newv)=> {
-    clg(`${md.name} html obs???? `+ newv);
-    if (md.dom) {
-        clg(`${md.name} html obs!!!!!! `+ newv);
+    if (md.dom) { // not known at time of creation, of course
+        //clg(`${md.name} innerhtml set!!!!! `+ newv);
         md.dom.innerHTML = newv;
     }
 });
 
 gSlotObserverDef('disabled', (s, md, newv)=> {
-    clg(`${md.name} disabled obs???? `+ !!newv);
     if (md.dom) {
-        clg(`${md.name} disabled obs!!!!!! `+ !!newv);
-        md.dom.disabled = true; 
+        md.dom.disabled = newv; 
     }
 });
 
@@ -55,7 +52,7 @@ function rockH(c) {
 //id="${c.md.id} 
 function kidsH(md) {
     if (md.kids) {
-        let hout = 'oops'
+        let hout = 'oops';
         withoutCDependency(()=>{
             hout = md.kids.reduce((pv, md)=>{ return pv+md.html;},'');
         })();
@@ -68,7 +65,7 @@ function kidsH(md) {
 
 function tag( tag, initargs, parent) {
     //clg(`tag ${tag} sees parent `+parent);
-    return mkm( parent, initargs.id
+    return mkm( parent, null // todo fully lose this idea of supplying id initargs.id
             , Object.assign({tag: tag
                             , html: cF(rockH)}
                         , initargs));
@@ -85,6 +82,12 @@ function h1(content, initargs, parent) {
     return tag('h1', Object.assign( {content: content}, initargs), parent);
 }
 
+function eko (tag,value) {
+    clg(`eko <${tag}> [${value}]`);
+    console.log(value.toString());
+    console.log(value);
+    return(value);
+}
 function label(content, initargs, parent) {
     return tag('label', Object.assign( {content: content}, initargs), parent);
 }

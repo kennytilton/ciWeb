@@ -1,7 +1,7 @@
 /**
  * Created by kenneth on 9/4/16.
  */
-
+/* global kNascent, kUntilAsked, kAlways, kAwake, qAwaken,  Cell */
 //@formatter:off
 
 function clg() {
@@ -43,8 +43,12 @@ class Model {
         this.others = {}; // cache here other models tracked down by formulas
         // so we have them handy if the rule runs again
         // todo not-to-be has to lose these references
-        this.id = ++sid;
-        console.assert( !icells.id, `Please let ciWeb manage the "id". Thx.`);
+        if (icells.id) {
+            console.warn(`Provided dom id ${icells.id} is your responsibility.`);
+            this.id = icells.id;
+        } else {
+            this.id = ++sid;
+        }
         this.state = kNascent;
         this.doomed = false; // aka in mid-notToBe
         // this.fnz = false; // dunno. short for finalization? not in play
@@ -87,7 +91,21 @@ class Model {
                     });
             }
         }
+        
+        // --- binding jsDom with dom -----------------
         jsDom[this.id]=this;
+        this.domCache = null;
+        Object.defineProperty(this
+            , 'dom', {
+                enumerable: true
+                , get: ()=> {
+                    if (this.domCache===null) {
+                        this.domCache = document.getElementById(this.id);
+                    }
+                    return this.domCache;
+                }
+            });
+
         if (this.awakenOnInitp) {
             this.awaken();
         } else {
