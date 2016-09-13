@@ -31,9 +31,14 @@ function jWebTest(hostID) {
                         name: 'beezer'
                         , click: cIe(null, {observer: XobsDbg})
                         , clickCt: cF(c=> {
-                            let clk = c.md.click;
-                            return (c.pv===kUnbound? 2: c.pv) +
-                                    (clk ? (clk.shiftKey?-1:1):0);
+                            let clk = c.md.click
+                            , clearer = c.fmUp('clearer');
+                            console.assert(clearer);
+                            clg(`clear??`);
+                            clg(clearer.click);
+                            return clearer.click? 0:
+                                    (c.pv===kUnbound? 2: c.pv) +
+                                        (clk ? (clk.shiftKey?-1:1):0);
                         }, {observer: XobsDbg})
                         , attrs: 'onclick="setClick(this,event)"'
                     })
@@ -46,13 +51,21 @@ function jWebTest(hostID) {
                                 return 'Hi, mom '+c.fm('beezer', {upp: true, insidep: false}).clickCt;
                             }))
                     , div(null, {
-                        kids: cF(c=>{
+                        name: 'clickRow'
+                        , kids: cF(c=>{
                             let ks=[], kct=c.fmUp('beezer').clickCt;
+                            clg(`clkrow kct ${kct}`);
                             for (x=0; x < kct;++x)
-                                ks[x] = label('click-'+x);
+                                ks[x] = label('click-'+x
+                                    , {attrs: 'style="margin-left:24px"'});
                             clg('div-ks '+ks);
                             return ks;
                         })
+                    })
+                    , button('Clear', {
+                        name: 'clearer'
+                        , click: cIe(null, {observer: XobsDbg})
+                        , attrs: 'onclick="setClick(this,event)"'
                     })
                     , label('Not too shabby'
                             , {attrs: {style: {color: "#00f", margin: "12px"}}})

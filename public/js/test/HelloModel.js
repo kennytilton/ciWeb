@@ -11,24 +11,24 @@ deftest('hello-model'
                                                 }}})})
                     , mkm( c.md, 'resident'
                             , {action: cIe(null)
-                                , location: cF(c=>{
-                                    switch (c.md.action) {
-                                        case 'leave': return 'away';
-                                        case 'return': return 'home';
-                                        default: return 'missing';
-                                    }}, {obsever: (slot, me, newv)=>{
-                                            if (newv)
-                                                clg(`Honey, I'm ${newv}!`);}})
-                                , response: cF(c=>{
-                                    if (c.md.location==='home') {
-                                        let viz = c.fm('visitor');
-                                        if (viz.action === 'knock-knock')
-                                            return `Hello, ${viz.moniker}.`;
-                                    }}, {ephemeral: true
-                                        , observer: (slot, me, newv)=>{
-                                            if (newv) {
-                                                clg(`Resident says, ${newv}`);
-                                            }}})})
+                            , location: cF(c=>{
+                                switch (c.md.action) {
+                                    case 'leave': return 'away';
+                                    case 'return': return 'home';
+                                    default: return 'missing';
+                                }}, {obsever: (slot, me, newv)=>{
+                                        if (newv)
+                                            clg(`Honey, I'm ${newv}!`);}})
+                            , response: cF(c=>{
+                                if (c.md.location==='home') {
+                                    let viz = c.fm('visitor');
+                                    if (viz.action === 'knock-knock')
+                                        return `Hello, ${viz.moniker}.`;
+                                }}, {ephemeral: true
+                                    , observer: (slot, me, newv)=>{
+                                        if (newv) {
+                                            clg(`Resident says, ${newv}`);
+                                        }}})})
                     , mkm( c.md, 'alarm'
                         , {onOff: cF(c=>{
                                     return c.md.fm('resident').location==='home'? 'off':'on';

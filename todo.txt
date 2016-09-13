@@ -1,5 +1,8 @@
 get back to optimizing away
 
+familyValues
+
+per attribute rules, eg, enabled on/off
 
 add observer on kids and worry about leaks et al
 
@@ -7,3 +10,4 @@ ajax demo
 
 Cells+ReactJS?
 
+create a chunk of dom in a separate function and pull into parent

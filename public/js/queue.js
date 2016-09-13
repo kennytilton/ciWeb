@@ -174,7 +174,8 @@ var Stack = function() {
             }
             , function (e) {
                 return _elements.includes(e);
-            }];
+            }
+            , function () { return _elements;}];
     })();
     this.push=functionSet[0];
     this.pop=functionSet[1];
@@ -182,6 +183,7 @@ var Stack = function() {
     this.setLength=functionSet[3];
     this.peek=functionSet[4];
     this.includes=functionSet[5];
+    this.elts=functionSet[6];
     // initializing the stack with given arguments
     this.push.apply(this,arguments);
 };

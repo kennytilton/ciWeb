@@ -47,7 +47,7 @@ function kidsH(md) {
     if (md.kids) {
        return md.kids.reduce((pv, md)=>{ return pv+md.html;},'');
    } else {
-       return `${md.name} has no kids`;
+       return `no kids! ${md.name}`;
    }
 }
 

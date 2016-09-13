@@ -420,7 +420,12 @@ class Cell {
     calcNSet(dbgId, dbgData) {
         //  Calculate, link, record, and propagate.
         if (callStack.includes(this)) {
-            clg(`cyclic dependency calculating ${this.name}`);
+            let elts = callStack.elts();
+            clg(`cyclic dependency: about to calculate ${this.name} already calculating`);
+            elts.forEach(c=>{
+                clg(`stack c ${c.name} of md ${c.md.name}`);
+            });
+            console.trace();
             throw 'cyclic dependency detected. see console for deets';
         }
         let rawValue = this.calcNLink();
