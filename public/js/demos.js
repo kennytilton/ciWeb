@@ -1,7 +1,7 @@
 
 /* global kUnbound, XobsDbg, jsDom */
 
-function jWebMini(hostId) {
+function ciWebDemo01(hostId) {
     console.assert(typeof hostId !== 'number'
         ,"Please use string IDs for hosts, ciWeb uses numbers internally. Thx.");
         
@@ -14,6 +14,7 @@ function jWebMini(hostId) {
         , attrs: 'style="background-color:#ff0;padding:6px"'
         , kids: cKids(c=> {
             return [ h1(`Beezelbub!`, { name: 'beezer'
+                        , title: 'Click or shift-click me for some action!'
                         , click: cIe(null, {observer: XobsDbg})
                         , clickCt: cF(c=> {
                             let clk = c.md.click // I run when this changes (happens)
@@ -22,16 +23,16 @@ function jWebMini(hostId) {
                             if (clearer.click) { // ...or this happens
                                 return 0;
                             } else {
-                                return (c.pv===kUnbound? 2 : c.pv) +
+                                return (c.pv===kUnbound? 0 : c.pv) +
                                         (clk ? (clk.shiftKey ? -1 : 1) : 0);
                             }
                         }, {observer: XobsDbg})
-                        , attrs: 'onclick="setClick(this,event)"'
+                        , attrs: 'onclick="setClick(this,event)" title="Click or shift-click me for some action!"'
                     })
                     , label( cF(c=>{
                                 // I run when clickCt change
-                                return 'Hi, mom '+c.fmUp('beezer').clickCt;
-                            }), {name: 'mommy'})
+                                return 'Beezy Clicks so far '+c.fmUp('beezer').clickCt;
+                            }))
 
 
                     , button('Clear', { name: 'clearer'
@@ -45,16 +46,21 @@ function jWebMini(hostId) {
                         , attrs: 'onclick="setClick(this,event)" style="margin-left:16px"'
                     })                            
                     , div(null, { name: 'clickRow'
+                        , stash: {}
                         , kids: cF(c=>{
-                            // yep: running when clcikCt changes
+                            // yep: running when clickCt changes
                             let ks=[], kct=c.fmUp('beezer').clickCt;
-                            for (x=0; x < kct;++x)
-                                ks[x] = label('click-'+x
+                            for (x=0; x < kct;++x) {
+                                let sx = c.md.stash[x];
+                                if (!sx) {
+                                    c.md.stash[x] = sx = label(`click-${x} ${Date.now()}`
                                     , {attrs: 'style="margin-left:24px"'});
+                                }
+                                ks[x] = sx;
+                            }
                             return ks;
                         })
                     })
-                    
                     ];
         })
     });
