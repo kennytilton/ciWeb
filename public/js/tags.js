@@ -31,7 +31,7 @@ function attrsBuild(raw) {
     };
     let a = objAttrs(raw,' ');
 
-    if (a) clg('final attrs!!!!!!!! '+a);
+    //if (a) clg('final attrs!!!!!!!! '+a);
     return a;
 }
 
@@ -39,7 +39,7 @@ function rockH(c) {
     let tag = c.md.tag
         , rawAttrs = c.md.attrs;
     ast(tag);
-    clg(`rockh sees id `+c.md.id);
+    //clg(`rockh sees id `+c.md.id);
     return `<${tag} id="${c.md.id}" ${attrsBuild(rawAttrs)}>${c.md.content || kidsH(c.md)}</${tag}>`;
 }
 //id="${c.md.id} 
@@ -53,6 +53,7 @@ function kidsH(md) {
 
 
 function tag( tag, initargs, parent) {
+    //clg(`tag ${tag} sees parent `+parent);
     return mkm( parent, initargs.id
             , Object.assign({tag: tag
                             , html: cF(rockH)}

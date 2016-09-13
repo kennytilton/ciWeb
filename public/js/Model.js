@@ -19,9 +19,24 @@ const kDead = "md-dead";
 
 var sid = 0; // aka "serial ID"
 
+const jsDom = [];
+
 class Model {
     constructor(parent, name, icells) {
-        this.par = parent; // I like to build models parent<->>kids
+        /*
+         * Note that we begin by initializing some slots
+         * but next will be processing icells (a misnomer, should be islots)
+         * and those may well overwrite what we see next.
+         * 
+         * eg, we set id to next sequential value, but may overwrite that
+         * with an icell. Mind you, that may be daft. We have the separate
+         * name property for search by name (where dups are cool) so why am
+         * I messing with the sid?
+         * 
+         * OK, I'll stop that, but this warning stands in re other initializations.
+         * 
+         */
+        this.par = parent || gPar; // we build models as parent<->>kids
         this.name = name;
         this.mtype = null; // eg, "selectionManager" for list items to seek out
         this.cells = {};
@@ -29,6 +44,7 @@ class Model {
         // so we have them handy if the rule runs again
         // todo not-to-be has to lose these references
         this.id = ++sid;
+        console.assert( !icells.id, `Please let ciWeb manage the "id". Thx.`)
         this.state = kNascent;
         this.doomed = false; // aka in mid-notToBe
         // this.fnz = false; // dunno. short for finalization? not in play
@@ -71,6 +87,7 @@ class Model {
                     });
             }
         }
+        jsDom[this.id]=this;
         if (this.awakenOnInitp) {
             this.awaken();
         } else {
@@ -134,7 +151,7 @@ class Model {
             } else {
                 //clg('fm failed!!! '+what);
                 if (how.mustp) {
-                    throw `fget failed what = ${what}, where = ${this.name}`;
+                    throw `fget failed what = ${what}, id ${this.id}, where = ${this.name}`;
                 }
             }
         } finally {
@@ -197,5 +214,23 @@ function mkm( par, id, props, kids) {
                                         return kds;})
                                 : kids} // do these need par set?
                 : null);
-    return new Model( par, id, opts);
+    let md = new Model( par, id, opts);
+    //clg(`mkm sees ids ${id} and mdid ${md.id} name ${md.name}`);
+    return md;
+}
+
+
+function cKids(formula, options) {
+    return Object.assign( new Cell(null
+                                , c=>{
+                                    let sgp = gPar;
+                                    gPar = c.md;
+                                    try {
+                                        return formula(c);
+                                    } finally {
+                                        gPar = sgp;
+                                    }
+                                }
+                                , false, false, null)
+        , options);
 }

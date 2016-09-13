@@ -26,7 +26,7 @@ Array.prototype.somex = function (test) {
         }
     }
     return null;
-}
+};
 
 
 
@@ -48,6 +48,10 @@ function gpulse() {
     // todo see if this functional accessor is necessary
     return ppulse;
 }
+
+
+var gPar = null; // set up by cKids for use in Model constructor
+
 var onePulsep = false;
 var dpLogp = false;
 
@@ -693,7 +697,9 @@ function obsDbg (name, me, newv, priorv, c) {
     console.log(`obsDbg! ${name} ${me.name} ${newv}`);
 //    console.log(`OBS: ${name} now ${newv} (was ${priorv})`);
 }
-
+function XobsDbg (name, me, newv, priorv, c) {
+    // handy way to hush obsDbg until sure not needed
+}
 //module.exports.Cell = Cell;
 //module.exports.cIe = cIe;
 //module.exports.cF = cF;
