@@ -22,10 +22,10 @@ var sid = 0; // aka "serial ID"
 const jsDom = [];
 
 class Model {
-    constructor(parent, name, icells) {
+    constructor(parent, name, islots, awakenp=true) {
         /*
          * Note that we begin by initializing some slots
-         * but next will be processing icells (a misnomer, should be islots)
+         * but next will be processing islots 
          * and those may well overwrite what we see next.
          * 
          * eg, we set id to next sequential value, but may overwrite that
@@ -43,27 +43,19 @@ class Model {
         this.others = {}; // cache here other models tracked down by formulas
         // so we have them handy if the rule runs again
         // todo not-to-be has to lose these references
-        if (icells.id) {
-            console.warn(`Provided dom id ${icells.id} is your responsibility.`);
-            this.id = icells.id;
-        } else {
-            this.id = ++sid;
-        }
+        
         this.state = kNascent;
         this.doomed = false; // aka in mid-notToBe
         // this.fnz = false; // dunno. short for finalization? not in play
         this.awakenOnInitp = false; // ie, bypass qAwaken
-
-        // this.cellsFlushed = {}; vestigial
-        
         this.adoptCt = 0; // rare case of non-child but "hosted"
         
-        for (let slot in icells) {
-            if (!icells.hasOwnProperty(slot))
+        for (let slot in islots) {
+            if (!islots.hasOwnProperty(slot))
                 continue;
 
-            //console.log(slot + " -> " + icells[slot]);
-            let value = icells[slot];
+            //console.log(slot + " -> " + islots[slot]);
+            let value = islots[slot];
 
             if (value instanceof Cell) {
                 value.name = slot;
@@ -92,26 +84,14 @@ class Model {
             }
         }
         
-        // --- binding jsDom with dom -----------------
-        jsDom[this.id]=this;
-        this.domCache = null;
-        Object.defineProperty(this
-            , 'dom', {
-                enumerable: true
-                , get: ()=> {
-                    if (this.domCache===null) {
-                        this.domCache = document.getElementById(this.id);
-                    }
-                    return this.domCache;
-                }
-            });
-
-        if (this.awakenOnInitp) {
-            this.awaken();
-        } else {
-            withIntegrity(qAwaken, this, x=> {
+        if (awakenp) {
+            if (this.awakenOnInitp) {
                 this.awaken();
-            });
+            } else {
+                withIntegrity(qAwaken, this, x=> {
+                    this.awaken();
+                });
+            }            
         }
     }
     awaken() {
@@ -222,12 +202,7 @@ class Model {
 
 //module.exports.Model = Model;
 
-
-function mkm( par, id, props, kids) {
-    //clg('mkm ', id, par? par.name:'nopar',kids===null);
-    if (id !=='uni') {
-        //if (!par) {console.warn('null par for '+id);}
-    }
+function mkm( par, id, props, kids, factory=Model) {
     opts = Object.assign({}, props
             , kids ? {kids: typeof kids==='function'?
                                 cF( c=>{//clg(' making kids!!! '+c.md.name);
@@ -236,11 +211,10 @@ function mkm( par, id, props, kids) {
                                         return kds;})
                                 : kids} // do these need par set?
                 : null);
-    let md = new Model( par, id, opts);
+    let md = new factory( par, id, opts);
     //clg(`mkm sees ids ${id} and mdid ${md.id} name ${md.name}`);
     return md;
 }
-
 
 function cKids(formula, options) {
     return Object.assign( new Cell(null

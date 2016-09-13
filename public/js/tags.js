@@ -13,6 +13,12 @@ gSlotObserverDef('disabled', (s, md, newv)=> {
     }
 });
 
+gSlotObserverDef('kids', (s, md, newv, oldv)=> {
+    if (md.dom) {
+        md.dom.disabled = newv; 
+    }
+});
+
 function attrsBuild(raw) {
     if (!raw) return '';
     let objAttrs = (raw, delimiter)=>{
@@ -68,7 +74,9 @@ function tag( tag, initargs, parent) {
     return mkm( parent, null // todo fully lose this idea of supplying id initargs.id
             , Object.assign({tag: tag
                             , html: cF(rockH)}
-                        , initargs));
+                        , initargs)
+            , null
+            , Tag);
 }
 
 //function genContentTag(tag) {
