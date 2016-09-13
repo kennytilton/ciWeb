@@ -71,6 +71,12 @@ function h1(content, initargs, parent) {
     return tag('h1', Object.assign( {content: content}, initargs), parent);
 }
 
+function label(content, initargs, parent) {
+    return tag('label', Object.assign( {content: content}, initargs), parent);
+}
+function div(content, initargs, parent) {
+    return tag('div', Object.assign( {content: content}, initargs), parent);
+}
 function h2(content, initargs, parent) {
     return tag('h2', Object.assign( {content: content}, initargs), parent);
 }

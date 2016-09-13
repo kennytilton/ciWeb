@@ -1,4 +1,6 @@
 
+/* global kUnbound, XobsDbg */
+
 function shazzam(self, event, deets) {
     
     clg('shazzam!self!!!'+ self);
@@ -30,14 +32,30 @@ function jWebTest(hostID) {
                         , click: cIe(null, {observer: XobsDbg})
                         , clickCt: cF(c=> {
                             let clk = c.md.click;
-                            return (c.pv===kUnbound? 0: c.pv) +
+                            return (c.pv===kUnbound? 2: c.pv) +
                                     (clk ? (clk.shiftKey?-1:1):0);
                         }, {observer: XobsDbg})
                         , attrs: 'onclick="setClick(this,event)"'
                     })
-                    , tag('label',{name: 'alabel', content: cF(c=>{
-                            return 'Hi, mom '+c.fm('beezer', {upp: true, insidep: false}).clickCt;
-                        })})
+                    /*
+                     * Next we see that until we get all the tags 
+                     * wrapped in their own functions we can stiil
+                     * use them with slightly less elegance.
+                     */
+                    , label( cF(c=>{
+                                return 'Hi, mom '+c.fm('beezer', {upp: true, insidep: false}).clickCt;
+                            }))
+                    , div(null, {
+                        kids: cF(c=>{
+                            let ks=[], kct=c.fmUp('beezer').clickCt;
+                            for (x=0; x < kct;++x)
+                                ks[x] = label('click-'+x);
+                            clg('div-ks '+ks);
+                            return ks;
+                        })
+                    })
+                    , label('Not too shabby'
+                            , {attrs: {style: {color: "#00f", margin: "12px"}}})
                     , h3(`jWeb zapped ${hostID}`
                         , {attrs: {style: 'color:#f00;background-color:#fff;margin:4px'}})
                     , h4(`Semi-fine print`
@@ -47,16 +65,8 @@ function jWebTest(hostID) {
                                 {color:'#0f0'
                                 , 'background-color': '#000'
                                 , padding:"18px"}}})
-                    //, button('GoGo')
+                    
                         ];
         })
     });
 }
-
-
-/*
-class HTag extends Model {
-    constructor(parent, name, icells) {
-        super(parent, name, icells);
-    }
-*/

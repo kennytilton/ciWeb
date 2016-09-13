@@ -631,6 +631,9 @@ class Cell {
         if (!this.md) throw `Family search attempted from Cell ${this} sans md property`;
         return this.md.fm( what, how, key);
     }
+    fmUp (what,how,key) {
+        return this.fm(what, Object.assign({upp: true, insidep: false}, how));
+    }
     fmd (what, key, how) {
         return this.fm( what, {mep: false, upp: false, insidep: true}, key);
         return this.fmd( what
