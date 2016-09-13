@@ -1,9 +1,19 @@
 
 
 gSlotObserverDef('html', (s, md, newv)=> {
-    //clg(`${md.name} html obs!!!!!! `+ newv);
-    if (md.dom)
-        md.dom.innerHTML = newv; 
+    clg(`${md.name} html obs???? `+ newv);
+    if (md.dom) {
+        clg(`${md.name} html obs!!!!!! `+ newv);
+        md.dom.innerHTML = newv;
+    }
+});
+
+gSlotObserverDef('disabled', (s, md, newv)=> {
+    clg(`${md.name} disabled obs???? `+ !!newv);
+    if (md.dom) {
+        clg(`${md.name} disabled obs!!!!!! `+ !!newv);
+        md.dom.disabled = true; 
+    }
 });
 
 function attrsBuild(raw) {
@@ -45,9 +55,13 @@ function rockH(c) {
 //id="${c.md.id} 
 function kidsH(md) {
     if (md.kids) {
-       return md.kids.reduce((pv, md)=>{ return pv+md.html;},'');
+        let hout = 'oops'
+        withoutCDependency(()=>{
+            hout = md.kids.reduce((pv, md)=>{ return pv+md.html;},'');
+        })();
+        return hout;
    } else {
-       return `no kids! ${md.name}`;
+       return '';
    }
 }
 

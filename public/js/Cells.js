@@ -422,10 +422,10 @@ class Cell {
         if (callStack.includes(this)) {
             let elts = callStack.elts();
             clg(`cyclic dependency: about to calculate ${this.name} already calculating`);
-            elts.forEach(c=>{
+            /*elts.forEach(c=>{
                 clg(`stack c ${c.name} of md ${c.md.name}`);
             });
-            console.trace();
+            console.trace();*/
             throw 'cyclic dependency detected. see console for deets';
         }
         let rawValue = this.calcNLink();
