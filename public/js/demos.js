@@ -1,6 +1,18 @@
 
 /* global kUnbound, XobsDbg, jsDom */
 
+function ciSandbox(hostId) {
+    console.assert(typeof hostId !== 'number'
+        ,"Please use string IDs for hosts, ciWeb uses numbers internally. Thx.");
+        
+    let host = document.getElementById(hostId);
+    // no need to return this (unless it gets GCed
+    console.assert(host, `Host ID ${hostId} not found via getElementById`);
+    h1('super mini'
+        , {id: hostId
+        , color: 'red'});
+}
+                    
 function ciWebDemo01(hostId) {
     console.assert(typeof hostId !== 'number'
         ,"Please use string IDs for hosts, ciWeb uses numbers internally. Thx.");
@@ -23,7 +35,7 @@ function ciWebDemo01(hostId) {
                             if (clearer.click) { // ...or this happens
                                 return 0;
                             } else {
-                                return (c.pv===kUnbound? 0 : c.pv) +
+                                return (c.pv===kUnbound? 2 : c.pv) +
                                         (clk ? (clk.shiftKey ? -1 : 1) : 0);
                             }
                         }, {observer: XobsDbg})
@@ -47,6 +59,11 @@ function ciWebDemo01(hostId) {
                     })                            
                     , div(null, { name: 'clickRow'
                         , stash: {}
+                        //, attrs: 'style="background-color:#fff;padding:6px"'
+                        //, attrs: 'style="border:2px;border-color:black"'
+                        //, attrs: 'style="color:red;"'
+                        //, border: "2px"
+                        , color: "red"
                         , kids: cF(c=>{
                             // yep: running when clickCt changes
                             let ks=[], kct=c.fmUp('beezer').clickCt;
