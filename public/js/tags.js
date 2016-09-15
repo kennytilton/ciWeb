@@ -1,4 +1,18 @@
 /* global Tag */
+const TagAttributesGlobal =  new Set(['accesskey','class','contenteditable','contextmenu','dir'
+    ,'draggable','dropzone','hidden','id','itemid','itemprop','itemref','itemscope'
+    ,'itemtype','lang','spellcheck','style','tabindex','title','translate']);
+
+const TagEvents =  new Set(['onabort','onautocomplete','onautocompleteerror','onblur','oncancel'
+    ,'oncanplay','oncanplaythrough','onchange','onclick','onclose','oncontextmenu','oncuechange'
+    ,'ondblclick','ondrag','ondragend','ondragenter','ondragexit','ondragleave','ondragover'
+    ,'ondragstart','ondrop','ondurationchange','onemptied','onended','onerror','onfocus'
+    ,'oninput','oninvalid','onkeydown','onkeypress','onkeyup','onload','onloadeddata'
+    ,'onloadedmetadata','onloadstart','onmousedown','onmouseenter','onmouseleave','onmousemove'
+    ,'onmouseout','onmouseover','onmouseup','onmousewheel','onpause','onplay','onplaying'
+    ,'onprogress','onratechange','onreset','onresize','onscroll','onseeked','onseeking'
+    ,'onselect','onshow','onsort','onstalled','onsubmit','onsuspend','ontimeupdate','ontoggle'
+    ,'onvolumechange','onwaiting']);
 
 HtmlProperties = new Set([
     'contentEditable','dataset','dir','isContentEditable','lang'
@@ -90,13 +104,6 @@ CommonCSSPropertiesJS = new Map([['background','background'], ['backgroundAttach
     , ['verticalAlign','vertical-align'], ['visibility','visibility']
     , ['width','width'], ['zIndex','z-index']]);
 
-gSlotObserverDef('html', (s, md, newv)=> {
-    if (md.dom) { // not known at time of creation, of course
-        clg(`${md.name} innerhtml!! `+ newv);
-        md.dom.innerHTML = newv;
-    }
-});
-
 gSlotObserverDef('disabled', (s, md, newv)=> {
     if (md.dom) {
         md.dom.disabled = newv; 
@@ -104,6 +111,7 @@ gSlotObserverDef('disabled', (s, md, newv)=> {
 });
 
 gSlotObserverDef('kids', (s, md, newv, oldv)=> {
+    
     if (md.dom) {
         md.dom.disabled = newv; 
     }
@@ -143,7 +151,7 @@ function mdStyleBuild(md) {
     for (let prop in md) {
         if (md.hasOwnProperty(prop)) {
             let cssProp = CommonCSSPropertiesJS.get(prop);
-            clg('md prop '+prop+'='+cssProp);
+            //clg('md prop '+prop+'='+cssProp);
             if (cssProp) {
                 let cssValue = md[prop];
                 ss += `${cssProp}:${cssValue};`;
@@ -154,41 +162,12 @@ function mdStyleBuild(md) {
     return ss===''? '' : ` style="${ss}"`
 }
 
-function rockH(c) {
-    let tag = c.md.tag
-        , rawAttrs = c.md.attrs
-        , finalAttrs = rawAttrs? attrsBuild(rawAttrs):mdStyleBuild(c.md);
-    ast(tag);
-    //clg(`rockh sees id `+c.md.id);
-    return `<${tag} id="${c.md.id}" ${finalAttrs}>${c.md.content || kidsH(c.md)}</${tag}>`;
-}
-//id="${c.md.id} 
-function kidsH(md) {
-    if (md.kids) {
-        let hout = 'oops';
-        withoutCDependency(()=>{
-            hout = md.kids.reduce((pv, md)=>{ return pv+md.html;},'');
-        })();
-        return hout;
-   } else {
-       return '';
-   }
-}
 
-
-
-//function genContentTag(tag) {
-//    return function (content, initargs, parent) {
-//        return tag(tag, Object.assign( {content: content}, initargs), parent);
-//    }
-//}
-//const h1 = genContentTag('h1');
 
 function tag( tag, initargs, parent) {
     //clg(`tag ${tag} sees parent `+parent);
     return mkm( parent, null // todo fully lose this idea of supplying id initargs.id
-            , Object.assign({tag: tag
-                            , html: cF(rockH)}
+            , Object.assign({tag: tag}
                         , initargs)
             , null
             , Tag);

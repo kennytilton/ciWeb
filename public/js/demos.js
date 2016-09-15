@@ -6,11 +6,32 @@ function ciSandbox(hostId) {
         ,"Please use string IDs for hosts, ciWeb uses numbers internally. Thx.");
         
     let host = document.getElementById(hostId);
-    // no need to return this (unless it gets GCed
     console.assert(host, `Host ID ${hostId} not found via getElementById`);
-    h1('super mini'
-        , {id: hostId
-        , color: 'red'});
+    
+    let jsDom =
+        tag('section', {
+            name: 'ciWeb '+ host.id
+            , id: hostId
+            , attrs: 'style="background-color:#ff0;padding:6px"'
+            , kids: cKids(c=> {
+                return [ h1(`Beezelbub!`, { name: 'beezer'
+                            , click: cIe(null, {observer: XobsDbg})
+                            , color: cF(c=>{ return c.md.clickCt < 2 ? 'blue':'red';})
+                            , clickCt: cF(c=> {
+                                let clk = c.md.click;
+                                return (c.pv===kUnbound? 0 : c.pv) +
+                                        (clk ? (clk.shiftKey ? -1 : 1) : 0);
+                            })
+                            , attrs: 'onclick="setClick(this,event)"'
+                        })
+                        , label( cF(c=>{
+                                    return 'Beezy Clicks so far '+c.fmUp('beezer').clickCt;
+                                }))];
+                        })});
+
+    console.assert(jsDom, 'sandbox failed to produce jsDom');
+    
+    host.innerHTML = jsDom.toHTML();
 }
                     
 function ciWebDemo01(hostId) {

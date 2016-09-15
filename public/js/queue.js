@@ -1,10 +1,3 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
 
 /* https://gist.github.com/Benvie/9988604*/
 
@@ -21,8 +14,6 @@ function define(object, properties) {
     }
 }
 
-
-
 function ArrayQueue() {
     this.size = 0;
     this._head = 0;
@@ -32,7 +23,7 @@ function ArrayQueue() {
 //noinspection JSUnusedGlobalSymbols,JSUnusedGlobalSymbols
 define(ArrayQueue.prototype, {
     emptyp: function emptyp() {
-        return this.size==0;
+        return this.size===0;
     },
 
     push: function push(value) {
@@ -109,34 +100,6 @@ define(ListQueue.prototype, {
     }
 });
 
-/*
-function assert(value, message) {
-    if (!value) {
-        throw message;
-    }
-}
-
-function is(a, b, name) {
-    assert(a === b, name + ": " + a + " isn't " + b);
-}
-
-function test(Queue) {
-    var queue = new Queue();
-    queue.push("a");
-    queue.push("b");
-    queue.push("c");
-    is(queue.shift(), "a", Queue.name);
-    is(queue.shift(), "b", Queue.name);
-    is(queue.shift(), "c", Queue.name);
-}
-*/
-
-/*
-test(Array);
-test(ArrayQueue);
-test(ListQueue);
-console.log('tests OK');
-*/
 
 //noinspection JSUnusedGlobalSymbols
 var array = [];
@@ -187,18 +150,3 @@ var Stack = function() {
     // initializing the stack with given arguments
     this.push.apply(this,arguments);
 };
-
-/*
- var s=new Stack(0,1), e;
- s.push(2);
-
- console.log('peek2='+s.peek());
- console.log(s.getLength()); // 3
- while(undefined!==(e=s.pop()))
- console.log('cool '+e); // 2, 1, 0
-
-*/
-//module.exports.Stack = Stack;
-//module.exports.ArrayQueue = ArrayQueue;
-//module.exports.ArrayQueue.wtf = ArrayQueue.wtf;
-//module.exports.ListQueue = ListQueue;

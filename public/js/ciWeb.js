@@ -22,6 +22,20 @@
  * THE SOFTWARE.
  */
 
+/*
+ * new plan is to have a js-to-html function run exactly once on the
+ * initial load pulling together all HTML in one wodge so we do not get
+ * into dom manipulation for that initial load (when it would be unnecessary
+ * and apparently slow).
+ * 
+ * Thereafter, all change is handled either via JS manipulation of a dom elements
+ * attributes or by incremenatlly adding/removing children.
+ * 
+ * Kinda scary: no HTML cell, and unlike OpenGL (where we rebuild a display
+ * list completely when necessary) we will only ever change DOM attributes (in
+ * a more abstract sense) and add/remove children in the kids observer.
+ * 
+ */
 class Tag extends Model {
     constructor(parent, name, islots) {
         let superSlots = Object.assign({}, islots);
@@ -55,6 +69,19 @@ class Tag extends Model {
                 this.awaken();
             });
         }
+    }
+    toHTML() {
+        let tag = this.tag
+            , rawAttrs = this.attrs
+            , a = attrsBuild(rawAttrs)
+            , s = mdStyleBuild(this)
+            , attrs = `${a} ${s}`;
+        ast(tag);
+
+        return `<${tag} id="${this.id}" ${attrs}>${this.content || this.kidsToHTML()}</${tag}>`;
+    }
+    kidsToHTML() {
+        return this.kids.reduce((pv, kid)=>{ return pv+kid.toHTML();},'');
     }
 }
 
