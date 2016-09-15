@@ -18,6 +18,10 @@ function find(x,y) {
         return x;
     }
 }
+function eko (tag,value) {
+    clg(`eko <${tag}> [${value.toString()}]`);
+    return(value);
+}
 Array.prototype.somex = function (test) {
     for (let [_,elt] of this.entries()) {
         let res = test(elt);
@@ -27,8 +31,6 @@ Array.prototype.somex = function (test) {
     }
     return null;
 };
-
-
 
 // --- the keys to dependency identification
 var causation = new Stack();
@@ -213,7 +215,8 @@ function withChg(id, fn) {
 }
 
 // --- internal Cell states
-const kUnbound = "unbound";
+const kUnbound = Symbol("unbound");
+
 const kUncurrent = "uncurrent";
 const kValid = "valid";
 const kAwake = "c-awake";
@@ -226,6 +229,9 @@ const kOptimizeWhenValued = "optimize-when-valued";
 const kOnceAsked = "lazy-once-asked";
 const kUntilAsked = "lazy-until-asked";
 const kAlways ="lazy-always";
+
+// other k's
+const kObserverUnresolved = 'kObserverUnresolved';
 
 // --- Cells ----------------------
 
@@ -274,14 +280,6 @@ class Cell {
         return this.unboundp() ?
                 kUnbound : this.uncurrentp() ? kUncurrent : kValid;
     }
-    named (n) {
-        this.name=n;
-        return this;
-    }
-    obs (fn) {
-        this.observer = fn;
-        return this;
-    }
     valueChangedp (newv,oldv) {
         let uct = (this.unchangedIf || this.unchangedTest);
         ast(uct, 'unchanged test required');
@@ -297,7 +295,6 @@ class Cell {
             this.pulse = gpulse();
         }
     }
-
     awaken() {
         console.assert(this.md,'whoa no md for '+this.name); // todo lose this for pure
         if (this.rule) {
@@ -308,18 +305,12 @@ class Cell {
         } else {
             //clg('awk pulses', gpulse(),this.pulseObserved);
             if (gpulse() > this.pulseObserved) {
-                // apparently double calls have occurred
-                /*if (this.md) {
-                    clg('am I zapping??? '+this.name);
-                    this.md[this.name] = this.pv;
-                }*/
                 //clg('awakenin obs!!!',this.name);
-                this.observe(undefined,'awaken');
+                this.observe(kUnbound,'awaken');
                 this.ephemeralReset();
             }
         }
     } // --- coming to life JIT or forced
-
 
     // --- the offical slot access API
     slotValue() {
@@ -559,18 +550,20 @@ class Cell {
     }  
     
     // --- the model alters the outside world (or itself, if necessary) ---
+    observerResolve () {
+        if (!this.observer) {
+            this.observer = this.md.slotObserverResolve(this.name);
+        }
+        return this.observer===kObserverUnresolved ? null : this.observer;
+    }
     observe( vPrior, tag) {
        //console.log('observe entry', vPrior);
-        if (this.observer) {
+       let obs = this.observerResolve();
+       
+       if (obs) {
             //console.log('this observe-ing '+ this.name +'/'+ this.md.name);
-            //console.log('observer', this.observer.toString());
-            this.observer(this.name, this.md, this.pv, vPrior, this);
-        } else {
-            let obs = gSlotObserver[this.name];
-            if (obs) {
-                //clg('gSlot observe! '+this.name);
-                obs(this.name, this.md, this.pv, vPrior, this);
-            }// else clg(`no slot obs either for ${this.name}`);
+            clg('observing!!! '+ this.observer.toString());
+            obs(this.name, this.md, this.pv, vPrior, this);
         }
     }
 

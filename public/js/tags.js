@@ -177,12 +177,7 @@ function h1(content, initargs, parent) {
     return tag('h1', Object.assign( {content: content}, initargs), parent);
 }
 
-function eko (tag,value) {
-    clg(`eko <${tag}> [${value}]`);
-    console.log(value.toString());
-    console.log(value);
-    return(value);
-}
+
 function label(content, initargs, parent) {
     return tag('label', Object.assign( {content: content}, initargs), parent);
 }

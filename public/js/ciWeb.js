@@ -36,6 +36,11 @@
  * a more abstract sense) and add/remove children in the kids observer.
  * 
  */
+function obsContent (slot, md, newv, oldv, c) {
+    if (oldv===kUnbound) return; // on awaken all HTML is assembled at once
+    clg('setting ihtml!!! '+ newv);
+    md.dom.innerHTML = newv;
+}
 class Tag extends Model {
     constructor(parent, name, islots) {
         let superSlots = Object.assign({}, islots);
@@ -47,6 +52,8 @@ class Tag extends Model {
         } else {
             this.id = ++sid;
         }
+        
+        this.slotObservers = [];
         
         // --- binding jsDom with dom -----------------
         jsDom[this.id]=this;
@@ -70,6 +77,7 @@ class Tag extends Model {
             });
         }
     }
+    
     toHTML() {
         let tag = this.tag
             , rawAttrs = this.attrs
@@ -83,11 +91,29 @@ class Tag extends Model {
     kidsToHTML() {
         return this.kids.reduce((pv, kid)=>{ return pv+kid.toHTML();},'');
     }
+    slotObserverResolve(slot) {
+        clg('soresolve '+slot);
+        let obs = this.slotObservers[slot];
+        if (!obs) {
+            clg('new slot '+slot);
+            switch (slot) {
+                case 'content': obs = obsContent;
+                break;
+                
+                default:
+                    console.warn(`tag ${this.tag} not resolving observer for ${slot}`);
+                    obs = kObserverUnresolved;
+            }
+            this.slotObservers[slot] = obs;
+        }
+        return obs;
+    }
 }
 
 function setClick (dom, event) {
+    //clg('setclick dom id '+dom.id);
     let jso = jsDom[dom.id];
-    //clg('setclick jsdom '+jso);
+    clg('setclick jsdom '+jso.id);
     jso.click = event;
 }
 

@@ -111,6 +111,10 @@ class Model {
         }
         this.state = kAwake;
     }
+    slotObserverResolve (slot) {
+        // see how Tag in ciWeb overrides this
+        return null;
+    }
     fmd (what, key, how) {
 //        clg('fmd sees '+ (how && how.mustp));
         return this.fm( what,

@@ -16,22 +16,30 @@ function ciSandbox(hostId) {
             , kids: cKids(c=> {
                 return [ h1(`Beezelbub!`, { name: 'beezer'
                             , click: cIe(null, {observer: XobsDbg})
-                            , color: cF(c=>{ return c.md.clickCt < 2 ? 'blue':'red';})
+                            , color: cF(c=>{ return eko('bzcolor',
+                                                c.md.clickCt < 2 ? 'blue':'red');})
                             , clickCt: cF(c=> {
                                 let clk = c.md.click;
+                                clg('ctr sees pv '+c.pv.toString());
+                                if (clk)
+                                    clg('ctr sees click '+clk+' '+clk.shiftKey);
                                 return (c.pv===kUnbound? 0 : c.pv) +
                                         (clk ? (clk.shiftKey ? -1 : 1) : 0);
                             })
                             , attrs: 'onclick="setClick(this,event)"'
                         })
                         , label( cF(c=>{
-                                    return 'Beezy Clicks so far '+c.fmUp('beezer').clickCt;
-                                }))];
+                            let b = c.fmUp('beezer');
+                            clg('label sees '+ b.clickCt)
+                            return 'Beezy Clicks so far '+b.clickCt;
+                        }))];
                         })});
 
     console.assert(jsDom, 'sandbox failed to produce jsDom');
     
-    host.innerHTML = jsDom.toHTML();
+    let ih = jsDom.toHTML();
+    clg('ihtml top '+ih);
+    host.innerHTML = ih;
 }
                     
 function ciWebDemo01(hostId) {
