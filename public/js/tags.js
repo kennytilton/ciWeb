@@ -1,4 +1,4 @@
-/* global Tag */
+/* global Tag TagEvents CommonCSSPropertiesJS */
 const TagAttributesGlobal =  new Set(['accesskey','class','contenteditable','contextmenu','dir'
     ,'draggable','dropzone','hidden','id','itemid','itemprop','itemref','itemscope'
     ,'itemtype','lang','spellcheck','style','tabindex','title','translate']);
@@ -104,49 +104,21 @@ CommonCSSPropertiesJS = new Map([['background','background'], ['backgroundAttach
     , ['verticalAlign','vertical-align'], ['visibility','visibility']
     , ['width','width'], ['zIndex','z-index']]);
 
-gSlotObserverDef('disabled', (s, md, newv)=> {
-    if (md.dom) {
-        md.dom.disabled = newv; 
-    }
-});
 
-gSlotObserverDef('kids', (s, md, newv, oldv)=> {
-    
-    if (md.dom) {
-        md.dom.disabled = newv; 
-    }
-});
-
-function attrsBuild(raw) {
-    if (!raw) return '';
-    let objAttrs = (raw, delimiter)=>{
-        if (typeof raw === 'string') {
-            return raw;
-        } else {
-            let attrs='', first=true;
-            for (var key in raw) {
-                if (raw.hasOwnProperty(key)) {
-                    //clg(`abuild sees key ${key}, delim ${delimiter}, value ${raw[key]}`);
-                    let nextDelim = delimiter===' '? '=':':';
-                    if (!first) attrs += delimiter;
-                    if (nextDelim==='=') {
-                        attrs += `${key}="${objAttrs(raw[key], ';')}"`;
-                    } else {
-                        attrs += `${key}:${objAttrs(raw[key], nextDelim)}`;
-                    }
-                    first = false;
-                }
+function tagAttrsBuild(md) {
+    let attrs = '';
+    for (let prop in md) {
+        if (md.hasOwnProperty(prop)) {
+            if (TagEvents.has(prop)) {
+                clg('bingo event!!!!!!!!!! '+prop);
+                attrs += `${prop}="${md[prop]}(this, event)"`;
             }
-            return attrs;
         }
-    };
-    let a = objAttrs(raw,' ');
-
-    //if (a) clg('final attrs!!!!!!!! '+a);
-    return a;
+    }
+    return attrs;
 }
 
-function mdStyleBuild(md) {
+function tagStyleBuild(md) {
     let ss = '';
     for (let prop in md) {
         if (md.hasOwnProperty(prop)) {
@@ -154,12 +126,13 @@ function mdStyleBuild(md) {
             //clg('md prop '+prop+'='+cssProp);
             if (cssProp) {
                 let cssValue = md[prop];
+                // note the shift from js prop name to CSS name
                 ss += `${cssProp}:${cssValue};`;
+
             }
         }
     }
-    clg('mdstylebuild!! '+ ss);
-    return ss===''? '' : ` style="${ss}"`
+    return ss===''? '' : ` style="${ss}"`;
 }
 
 

@@ -561,8 +561,6 @@ class Cell {
        let obs = this.observerResolve();
        
        if (obs) {
-            //console.log('this observe-ing '+ this.name +'/'+ this.md.name);
-            clg('observing!!! '+ this.observer.toString());
             obs(this.name, this.md, this.pv, vPrior, this);
         }
     }

@@ -1,7 +1,7 @@
 /* 
  * The MIT License
  *
- * Copyright 2016 Kenneth.
+ * Copyright 2016 Kenneth Tilton.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,10 +36,22 @@
  * a more abstract sense) and add/remove children in the kids observer.
  * 
  */
+
 function obsContent (slot, md, newv, oldv, c) {
     if (oldv===kUnbound) return; // on awaken all HTML is assembled at once
     clg('setting ihtml!!! '+ newv);
     md.dom.innerHTML = newv;
+}
+function obsStyleProperty (property, md, newv, oldv, c) {
+    if (oldv===kUnbound) return; // on awaken all HTML is assembled at once
+    clg(`setting ${property}!!! `+ newv);
+    md.dom.style[property] = newv;
+}
+
+function obsTagEventHandler (property, md, newv, oldv, c) {
+    if (oldv===kUnbound) return; // on awaken all HTML is assembled at once
+    clg(`setting ${property}!!! `+ newv);
+    md.dom.style.set[property] = `${newv}(this, event);`;
 }
 class Tag extends Model {
     constructor(parent, name, islots) {
@@ -80,10 +92,9 @@ class Tag extends Model {
     
     toHTML() {
         let tag = this.tag
-            , rawAttrs = this.attrs
-            , a = attrsBuild(rawAttrs)
-            , s = mdStyleBuild(this)
-            , attrs = `${a} ${s}`;
+            , others = tagAttrsBuild(this)
+            , s = tagStyleBuild(this)
+            , attrs = `${others} ${s}`;
         ast(tag);
 
         return `<${tag} id="${this.id}" ${attrs}>${this.content || this.kidsToHTML()}</${tag}>`;
@@ -92,17 +103,17 @@ class Tag extends Model {
         return this.kids.reduce((pv, kid)=>{ return pv+kid.toHTML();},'');
     }
     slotObserverResolve(slot) {
-        clg('soresolve '+slot);
         let obs = this.slotObservers[slot];
         if (!obs) {
-            clg('new slot '+slot);
-            switch (slot) {
-                case 'content': obs = obsContent;
-                break;
-                
-                default:
-                    console.warn(`tag ${this.tag} not resolving observer for ${slot}`);
-                    obs = kObserverUnresolved;
+            if (slot === 'content') {
+                obs = obsContent;
+            } else if (CommonCSSPropertiesJS.get(slot)) {
+                obs = obsStyleProperty;
+            } else if (TagEvents.has(slot)) {
+                obs = obsTagEventHandler;
+            } else {
+                console.warn(`tag ${this.tag} not resolving observer for ${slot}`);
+                obs = kObserverUnresolved;
             }
             this.slotObservers[slot] = obs;
         }

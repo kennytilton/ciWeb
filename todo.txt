@@ -3,14 +3,11 @@ get back to optimizing away
 familyValues
 
 per attribute rules, eg, enabled on/off
-this also needs attributes in original HTML because observer may run too early
 
 add observer on kids and worry about leaks et al
 
 ajax demo
 
-Cells+ReactJS?
-
 create a chunk of dom in a separate function and pull into parent
 
-why clear not work if cycle detected? (move button lower in jWebTest)
+why does clear not work if cycle detected? (move button lower in jWebTest)
