@@ -4,7 +4,9 @@ familyValues
 
 per attribute rules, eg, enabled on/off
 
-add observer on kids and worry about leaks et al
+check we can add kid in middle
+
+have observer on kids call not-to-be on lostks
 
 ajax demo
 

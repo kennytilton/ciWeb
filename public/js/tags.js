@@ -76,8 +76,6 @@ CSSProperties = new Set(['align-content','align-items','align-self','all','<angl
     ,'vertical-align','vh','visibility','vmax','vmin','vw','white-space','widows','width','will-change','word-break'
     ,'word-spacing','word-wrap','writing-mode','z-index','zoom']);
 
-
-
 CommonCSSPropertiesJS = new Map([['background','background'], ['backgroundAttachment','background-attachment']
     , ['backgroundColor','background-color'], ['backgroundImage','background-image']
     , ['backgroundPosition','background-position'], ['backgroundRepeat','background-repeat']
@@ -110,8 +108,16 @@ function tagAttrsBuild(md) {
     for (let prop in md) {
         if (md.hasOwnProperty(prop)) {
             if (TagEvents.has(prop)) {
-                clg('bingo event!!!!!!!!!! '+prop);
+                //clg('bingo event!!!!!!!!!! '+prop);
                 attrs += `${prop}="${md[prop]}(this, event)"`;
+            } else {
+                switch (prop) {
+                    case 'disabled': // a very weird attribute
+                        if (md[prop]) {
+                            attrs += ' disabled';
+                        }
+                        break;
+                }
             }
         }
     }

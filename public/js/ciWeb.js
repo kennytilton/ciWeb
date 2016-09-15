@@ -22,35 +22,79 @@
  * THE SOFTWARE.
  */
 
-/*
- * new plan is to have a js-to-html function run exactly once on the
- * initial load pulling together all HTML in one wodge so we do not get
- * into dom manipulation for that initial load (when it would be unnecessary
- * and apparently slow).
- * 
- * Thereafter, all change is handled either via JS manipulation of a dom elements
- * attributes or by incremenatlly adding/removing children.
- * 
- * Kinda scary: no HTML cell, and unlike OpenGL (where we rebuild a display
- * list completely when necessary) we will only ever change DOM attributes (in
- * a more abstract sense) and add/remove children in the kids observer.
- * 
- */
+/* global kUnbound sid jsDom */
 
 function obsContent (slot, md, newv, oldv, c) {
     if (oldv===kUnbound) return; // on awaken all HTML is assembled at once
-    clg('setting ihtml!!! '+ newv);
+    //clg('setting ihtml!!! '+ newv);
     md.dom.innerHTML = newv;
 }
+
+// referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+function obsKids (slot, md, newv, oldv, c) {
+    if (oldv===kUnbound) return; // on awaken all HTML is assembled at once
+    //clg(`<${md.tag}> ${c.name} changed!!! `+ newv + ' from ' + oldv +'!');
+    let priork = null;
+    
+    for (kx=0; kx < oldv.length; ++kx) {
+        let oldk = oldv[kx];
+        if (!find( oldk, newv)) {
+            let bid = document.getElementById(oldk.id)
+            , opar = oldk.dom.parentNode
+            , obpar =bid.parentNode;
+            /*clg('bid!!!!!!!!!!!!!!!!!');
+            clg(bid);
+            clg(`old by id match ${bid===oldk.dom}`);
+            clg(`par match ${opar === md.dom}`);
+            clg(`gpar match ${opar.parentNode === md.dom}`);
+            clg(`opar unknown ?!!!! ${opar}`);
+            clg(`kpars match ${opar===obpar}`);
+            clg(`par ${md.id} dropping ${oldk.id}`);*/
+            
+            // NG md.dom.removeChild(bid);
+            // OK bid.parentNode.removeChild(bid);
+            obpar.removeChild(bid);
+        }
+    }
+    
+    for (kx=0; kx < newv.length; ++kx) {
+        let newk = newv[kx];
+        if (find( newk, oldv)) {
+            priork = newk;
+        } else {
+            let newh = newk.toHTML()
+            , newtag = document.createElement('yobbo'); //(newk.tag); 
+            newk.creDom = newtag; // will be parent of newk.dom!!
+            // clg(`par ${md.id} gets newk!! ${newk.id} = `+newh);
+            newtag.innerHTML = newh;
+            if (priork === null) {
+                //clg('ibefore null');
+                md.dom.insertBefore( newtag, null);
+            } else {
+                //clg('got priork!!! '+priork);
+                md.dom.insertBefore( newtag, priork.dom.nextSibling);
+            }
+            //clg(`yep!! ${newtag===newk.dom.parentNode}`);
+            priork = newk;
+        }
+    }
+}
+
+function obsDisabled (slot, md, newv, oldv, c) {
+    if (oldv===kUnbound) return; // on awaken all HTML is assembled at once
+    //clg('setting disabled!!! '+ newv);
+    md.dom.disabled = !!newv;
+}
+
 function obsStyleProperty (property, md, newv, oldv, c) {
     if (oldv===kUnbound) return; // on awaken all HTML is assembled at once
-    clg(`setting ${property}!!! `+ newv);
+    //clg(`setting ${property}!!! `+ newv);
     md.dom.style[property] = newv;
 }
 
 function obsTagEventHandler (property, md, newv, oldv, c) {
     if (oldv===kUnbound) return; // on awaken all HTML is assembled at once
-    clg(`setting ${property}!!! `+ newv);
+    //clg(`setting ${property}!!! `+ newv);
     md.dom.style.set[property] = `${newv}(this, event);`;
 }
 class Tag extends Model {
@@ -107,12 +151,16 @@ class Tag extends Model {
         if (!obs) {
             if (slot === 'content') {
                 obs = obsContent;
+            } else if (slot === 'kids') {
+                obs = obsKids;
+            } else if (slot === 'disabled') {
+                obs = obsDisabled;
             } else if (CommonCSSPropertiesJS.get(slot)) {
                 obs = obsStyleProperty;
             } else if (TagEvents.has(slot)) {
                 obs = obsTagEventHandler;
             } else {
-                console.warn(`tag ${this.tag} not resolving observer for ${slot}`);
+                //console.warn(`tag ${this.tag} not resolving observer for ${slot}`);
                 obs = kObserverUnresolved;
             }
             this.slotObservers[slot] = obs;
@@ -124,7 +172,7 @@ class Tag extends Model {
 function setClick (dom, event) {
     //clg('setclick dom id '+dom.id);
     let jso = jsDom[dom.id];
-    clg('setclick jsdom '+jso.id);
+    //clg('setclick jsdom '+jso.id);
     jso.click = event;
 }
 

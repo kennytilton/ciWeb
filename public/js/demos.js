@@ -21,18 +21,43 @@ function ciSandbox(hostId) {
                             , color: cF(c=>{ return c.md.clickCt < 2 ?
                                                         'blue':'red';})
                             , clickCt: cF(c=> {
-                                let clk = c.md.click;
-                                return (c.pv===kUnbound? 0 : c.pv) +
-                                        (clk ? (clk.shiftKey ? -1 : 1) : 0);
+                                let clk = c.md.click
+                                , clr = c.fmUp('clearer').click;
+                                return clr ? 0 : (c.pv===kUnbound? 0 : c.pv) +
+                                                 (clk ? (clk.shiftKey ? -1 : 1) : 0);
                             })})
                         , label( cF(c=>{
                             let b = c.fmUp('beezer');
                             return 'Beezy Clicks so far '+b.clickCt;
-                        }))];
+                        }))
+                        , button('Clear', { name: 'clearer'
+                            , click: cIe(null)
+                            , onclick: 'setClick'
+                            , marginLeft: '16px'
+                            , disabled: cF(c=>{
+                                // redecide disablement when clickCt changes
+                                let ct = c.fmUp('beezer').clickCt
+                                , dis = ct > 0 ? false:true;
+                                return dis;
+                            })})
+                        , div(null, {
+                            stash: {}
+                            , name: 'clicks'
+                            , kids: cF(c=>{
+                                let ks=[], kct=c.fmUp('beezer').clickCt;
+                                for (x=0; x < kct;++x) {
+                                    let sx = c.md.stash[x];
+                                    if (!sx) {
+                                        c.md.stash[x] = sx =
+                                            label(`click-${x} ${Date.now()}`);
+                                    }
+                                    ks[x] = sx;
+                                }
+                                return ks;
+                            })})
+                        ];
             })});
 
-    console.assert(jsDom, 'sandbox failed to produce jsDom');
-    
     let ih = jsDom.toHTML();
     clg('ihtml top '+ih);
     host.innerHTML = ih;
