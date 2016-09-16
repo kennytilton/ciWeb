@@ -95,7 +95,7 @@ function obsStyleProperty (property, md, newv, oldv, c) {
 function obsTagEventHandler (property, md, newv, oldv, c) {
     if (oldv===kUnbound) return; // on awaken all HTML is assembled at once
     //clg(`setting ${property}!!! `+ newv);
-    md.dom.style.set[property] = `${newv}(this, event);`;
+    md.dom.style.set[property] = newv;
 }
 class Tag extends Model {
     constructor(parent, name, islots) {

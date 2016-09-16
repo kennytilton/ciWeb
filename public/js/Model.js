@@ -38,7 +38,7 @@ class Model {
          */
         this.par = parent || gPar; // we build models as parent<->>kids
         this.name = name;
-        this.mtype = null; // eg, "selectionManager" for list items to seek out
+        this.mdType = null; // eg, "selMgr" for list items to seek out
         this.cells = {};
         this.others = {}; // cache here other models tracked down by formulas
         // so we have them handy if the rule runs again
@@ -132,7 +132,7 @@ class Model {
         if (key) {
             let known = this.others[key];
             if (known) {
-                //clg(`md.fm reusing known ${key}`);
+                clg(`md.fm reusing known!!!!!!!! ${key}`);
                 return known;
             }
         }
@@ -147,34 +147,39 @@ class Model {
         try {
             let bingo = this.fmTv( what, how);
             if (bingo) {
-                //clg('fm bingo!!! '+bingo.name);
+                clg('fm bingo!!! '+bingo.name);
                 this.others[key] = bingo;
                 found = bingo;
             } else {
                 //clg('fm failed!!! '+what);
                 if (how.mustp) {
-                    throw `fget failed what = ${what}, id ${this.id}, where = ${this.name}`;
+                    throw `fget failed what = ${what.toString()}, id ${this.id}, where = ${this.name}`;
                 }
             }
         } finally {
             depender = sd;
         }
-        //clg('fm returns!!!!! '+ (found && found.name));
+        clg('fm returns!!!!! '+ (found && found.name));
         return found;
-        
+    }
+    fmUp(what, how, key) {
+        return this.fm( what, Object.assign({upp: true, mep: false}), key)
     }
     fmatch(seek) {
-        //clg(`fmatch looks at ${this.name} seeking ${seek}`);
+        clg(`fmatch looks at ${this.name} seeking ${seek.toString()}`);
+        //clg(`fmatch sees seektype ${typeof seek} ${this.mdType} ${seek.toString()}`);
+        //clg(`fmatch sees seektype ${typeof seek==='symbol'} ${this.mdType===seek.toString()}`);
         let m = ((typeof seek === 'function' && seek(this))
                  || (typeof seek === 'string' && this.name === seek)
+                 || (typeof seek === 'symbol' && this.mdType === seek)
                  || this === seek)? this : null;
         if (m) {
-            //clg(`bingo fmatch ${this.name}`);
+            clg(`match!!!!!!!!!!!!!!!!!!!!!!!!!!!! ${seek.toString()}`);
         }
         return m;
     }
     fmTv( what, how) {
-        //clg(`fmTv entry ${this.name} upp=${how.upp} mep=${how.mep} inside=${how.insidep}`);
+//        clg(`fmTv entry ${this.name} upp=${how.upp} mep=${how.mep} inside=${how.insidep}`);
 //        clg(`fmTv entry par=${this.par && this.par.name}`);
 //        clg(`fmTv entry kids=${this.kids}`);
         let self = this;
@@ -182,11 +187,11 @@ class Model {
             return (how.mep && this.fmatch(what)) ||
                     (how.insidep && this.kids
                         && this.kids.somex((elt, eltx, _)=>{
-                        //clg(`${self.name} kidchks ${elt.name}`);
-                            let found = (elt !== how.skip)
-                                     && elt.fmTv(what, Object.assign( {}, how, { upp: false, mep: true}));
-                            if (found) return found;
-                        })) ||
+                            clg(`${self.name} kidchks ${elt.name}`);
+                                let found = (elt !== how.skip)
+                                         && elt.fmTv(what, Object.assign( {}, how, { upp: false, mep: true}));
+                                if (found) return found;
+                            })) ||
                     (function () {
                         //clg(`fmTv ${self.name} considers upp ${how.upp} par=${self.par}`);
                         return (how.upp
