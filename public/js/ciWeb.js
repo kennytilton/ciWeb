@@ -39,9 +39,9 @@ function obsKids (slot, md, newv, oldv, c) {
     for (kx=0; kx < oldv.length; ++kx) {
         let oldk = oldv[kx];
         if (!find( oldk, newv)) {
-            let bid = document.getElementById(oldk.id)
-            , opar = oldk.dom.parentNode
-            , obpar =bid.parentNode;
+            let kdom = oldk.creDom || document.getElementById(oldk.id);
+            //, opar = oldk.dom.parentNode
+            //, obpar =bid.parentNode;
             /*clg('bid!!!!!!!!!!!!!!!!!');
             clg(bid);
             clg(`old by id match ${bid===oldk.dom}`);
@@ -53,7 +53,7 @@ function obsKids (slot, md, newv, oldv, c) {
             
             // NG md.dom.removeChild(bid);
             // OK bid.parentNode.removeChild(bid);
-            obpar.removeChild(bid);
+            kdom.parentNode.removeChild(kdom);
         }
     }
     
@@ -62,11 +62,20 @@ function obsKids (slot, md, newv, oldv, c) {
         if (find( newk, oldv)) {
             priork = newk;
         } else {
-            let newh = newk.toHTML()
-            , newtag = document.createElement('yobbo'); //(newk.tag); 
+            let newtag = document.createElement('div'); //(newk.tag); 
             newk.creDom = newtag; // will be parent of newk.dom!!
             // clg(`par ${md.id} gets newk!! ${newk.id} = `+newh);
-            newtag.innerHTML = newh;
+            //clg(`newk!!! ${typeof newk} ${newk instanceof Goog} `+newk.name);
+            if (newk instanceof Goog) {
+                let g = new newk.gFactory();
+                g.create(newtag);
+                g.id = newk.id;
+                // todo check that newtag dom still extant
+                // check that datepicker found by ID
+            } else {
+                newtag.innerHTML = newk.toHTML()
+            }
+
             if (priork === null) {
                 //clg('ibefore null');
                 md.dom.insertBefore( newtag, null);

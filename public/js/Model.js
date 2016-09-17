@@ -147,7 +147,7 @@ class Model {
         try {
             let bingo = this.fmTv( what, how);
             if (bingo) {
-                clg('fm bingo!!! '+bingo.name);
+                //clg('fm bingo!!! '+bingo.name);
                 this.others[key] = bingo;
                 found = bingo;
             } else {
@@ -159,14 +159,14 @@ class Model {
         } finally {
             depender = sd;
         }
-        clg('fm returns!!!!! '+ (found && found.name));
+        //clg('fm returns!!!!! '+ (found && found.name));
         return found;
     }
     fmUp(what, how, key) {
         return this.fm( what, Object.assign({upp: true, mep: false}), key)
     }
     fmatch(seek) {
-        clg(`fmatch looks at ${this.name} seeking ${seek.toString()}`);
+        //clg(`fmatch looks at ${this.name} seeking ${seek.toString()}`);
         //clg(`fmatch sees seektype ${typeof seek} ${this.mdType} ${seek.toString()}`);
         //clg(`fmatch sees seektype ${typeof seek==='symbol'} ${this.mdType===seek.toString()}`);
         let m = ((typeof seek === 'function' && seek(this))
@@ -174,7 +174,7 @@ class Model {
                  || (typeof seek === 'symbol' && this.mdType === seek)
                  || this === seek)? this : null;
         if (m) {
-            clg(`match!!!!!!!!!!!!!!!!!!!!!!!!!!!! ${seek.toString()}`);
+            //clg(`match!!!!!!!!!!!!!!!!!!!!!!!!!!!! ${seek.toString()}`);
         }
         return m;
     }
@@ -185,13 +185,14 @@ class Model {
         let self = this;
         try {
             return (how.mep && this.fmatch(what)) ||
+                    
                     (how.insidep && this.kids
                         && this.kids.somex((elt, eltx, _)=>{
-                            clg(`${self.name} kidchks ${elt.name}`);
-                                let found = (elt !== how.skip)
-                                         && elt.fmTv(what, Object.assign( {}, how, { upp: false, mep: true}));
-                                if (found) return found;
-                            })) ||
+                            //clg(`${self.name} kidchks ${elt.name}`);
+                            let found = (elt !== how.skip)
+                                     && elt.fmTv(what, Object.assign( {}, how, { upp: false, mep: true}));
+                            if (found) return found;})) ||
+
                     (function () {
                         //clg(`fmTv ${self.name} considers upp ${how.upp} par=${self.par}`);
                         return (how.upp

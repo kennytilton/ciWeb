@@ -28,6 +28,17 @@ function ciSandbox(hostId) {
                                 return clr ? 0 : (c.pv===kUnbound? 2 : c.pv) +
                                                  (clk ? (clk.shiftKey ? -1 : 1) : 0);
                             })})
+                        , div(null, {
+                            name: 'dateSocket'
+                            , showdater: cI(false)
+                            , kids: cKids(c=>{
+                                let ks = [];
+                                ks.push( label('When?', {onclick: 'dateMe', name: 'whennnn'}));
+                                if (c.md.showdater) {
+                                    ks.push( datePicker({name:'dapicker!!!'}));
+                                }
+                                return ks;
+                            })})
                         , label( cF(c=>{
                             let b = c.fmUp('beezer');
                             return 'Beezy Clicks so far '+b.clickCt;
@@ -77,6 +88,11 @@ function labelOption (par, x) {
         , marginLeft: "16px"
         , onclick: 'optClick'
     }, par);
+}
+
+function dateMe (mdom, event) {
+    let md = jsDom[mdom.id];
+    md.par.showdater = !md.par.showdater;
 }
 
 function optClick (mdom, event) {

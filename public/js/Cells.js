@@ -1,3 +1,158 @@
+
+
+
+/* https://gist.github.com/Benvie/9988604*/
+
+var MISSING = {};
+var QUEUE_COMPACT_SIZE = 500;
+
+function define(object, properties) {
+    for (var key in properties) {
+        //noinspection JSUnfilteredForInLoop
+        var desc = Object.getOwnPropertyDescriptor(properties, key);
+        desc.enumerable = false;
+        //noinspection JSUnfilteredForInLoop
+        Object.defineProperty(object, key, desc);
+    }
+}
+
+function ArrayQueue() {
+    this.size = 0;
+    this._head = 0;
+    this._items = [];
+}
+
+//noinspection JSUnusedGlobalSymbols,JSUnusedGlobalSymbols
+define(ArrayQueue.prototype, {
+    emptyp: function emptyp() {
+        return this.size===0;
+    },
+
+    push: function push(value) {
+        this._items.push(value);
+        return ++this.size;
+    },
+    shift: function shift() {
+        if (this.size) {
+            var value = this._items[this._head];
+            if (this._head === QUEUE_COMPACT_SIZE) {
+                this._items = this._items.slice(this._head + 1);
+                this._head = 0;
+                this.size--;
+            } else {
+                this._items[this._head++] = MISSING;
+            }
+            return value;
+        }
+    },
+    clear: function clear() {
+        this.size = 0;
+        this._head = 0;
+        this._items.length = 0;
+    },
+    forEach: function forEach(callback, thisArg) {
+        if (this.size) {
+            for (var i = this._head, index = 0; i < this._items.length; i++) {
+                var value = this._items[i];
+                if (value !== MISSING) {
+                    callback.call(thisArg, value, index++, this);
+                }
+            }
+        }
+    }
+});
+
+function ListQueue() {
+    this.size = 0;
+    this._tail = null;
+    this._head = null;
+}
+
+//noinspection JSUnusedGlobalSymbols,JSUnusedGlobalSymbols
+define(ListQueue.prototype, {
+    push: function push(value) {
+        if (this.size) {
+            this._tail = this._tail[0] = [this._tail, value];
+        } else {
+            this._tail = this._head = [null, value];
+        }
+        return ++this.size;
+    },
+    shift: function shift() {
+        if (this.size) {
+            var value = this._head[1];
+            this._head = this._head[0];
+            this.size--;
+            return value;
+        }
+    },
+    clear: function clear() {
+        this.size = 0;
+        this._tail = null;
+        this._head = null;
+    },
+    forEach: function forEach(callback, thisArg) {
+        if (this.size) {
+            var index = 0;
+            var item = this._head;
+            do {
+                callback.call(thisArg, item[1], index++, this);
+            } while (item = item[0])
+        }
+    }
+});
+
+
+//noinspection JSUnusedGlobalSymbols
+var array = [];
+//noinspection JSUnusedGlobalSymbols
+var arrayQueue = new ArrayQueue();
+//noinspection JSUnusedGlobalSymbols
+var listQueue = new ListQueue();
+
+//noinspection JSUnusedGlobalSymbols
+function time(queue) {
+    for (var i = 0; i < 3; i++) {
+        queue.push(i);
+    }
+    var total = 0;
+    while (i--) {
+        total += queue.shift();
+    }
+    return total;
+}
+
+var Stack = function() {
+    var functionSet=(function() {
+        var _elements=[]; // creating a private array
+        return [
+            // push function
+            function()
+            { return _elements.push .apply(_elements,arguments); }
+            // pop function
+            , function()
+            { return _elements.pop .apply(_elements,arguments); }
+            , function() { return _elements.length; }
+            , function(n) { return _elements.length=n; }
+            , function () {
+                return _elements[_elements.length-1];
+            }
+            , function (e) {
+                return _elements.includes(e);
+            }
+            , function () { return _elements;}];
+    })();
+    this.push=functionSet[0];
+    this.pop=functionSet[1];
+    this.getLength=functionSet[2];
+    this.setLength=functionSet[3];
+    this.peek=functionSet[4];
+    this.includes=functionSet[5];
+    this.elts=functionSet[6];
+    // initializing the stack with given arguments
+    this.push.apply(this,arguments);
+};
+
 /* 
  * The MIT License
  *
@@ -296,7 +451,6 @@ class Cell {
         }
     }
     awaken() {
-        console.assert(this.md,'whoa no md for '+this.name); // todo lose this for pure
         if (this.rule) {
             if (!this.currentp()) {
                 //clg(`calcnset ${this.name} of ${this.md.name}`);
@@ -461,17 +615,15 @@ class Cell {
         let self = this;
         //clg('val ass etry', this.name, newValue);
         withoutCDependency(()=>{
-            //clg('valass entry');
+           //clg('valass entry');
            let priorValue = self.pv
                 , priorState = self.valueState();
             self.pv = newValue;
-            //clg('self pv now',self.pv);
             self.state = kAwake;
             if (self.md && !self.synapticp) {
                 mdSlotValueStore( self.md, self.name, newValue);
             }
             self.pulseUpdate('sv-assume');
-            //clg('priorstate', priorState.toString(),propCode);
             if (propCode==='propagate'
                 || [kValid,kUncurrent].indexOf(priorState) === -1
                 || self.valueChangedp( newValue, priorValue)) {
@@ -551,18 +703,19 @@ class Cell {
     
     // --- the model alters the outside world (or itself, if necessary) ---
     observerResolve () {
-        if (!this.observer) {
+        if (!this.observer && this.md) { // The Model class
             this.observer = this.md.slotObserverResolve(this.name);
         }
         return this.observer===kObserverUnresolved ? null : this.observer;
     }
     observe( vPrior, tag) {
-       //console.log('observe entry', vPrior);
+       //clg('observe entry', this.name, vPrior.toString());
        let obs = this.observerResolve();
        
+
        if (obs) {
-            obs(this.name, this.md, this.pv, vPrior, this);
-        }
+           obs(this.name, this.md, this.pv, vPrior, this);
+       }
     }
 
     // --- ephemerals are for event "state" ----
@@ -624,7 +777,8 @@ class Cell {
 
     fm (what, how, key) { // short for "find model"
         if (!what) return;
-        if (!this.md) throw `Family search attempted from Cell ${this} sans md property`;
+        
+        if (!this.md) throw `Family search attempted from Cell ${this} lacking md (s/b a Model)`;
         return this.md.fm( what, how, key);
     }
     fmUp (what,how,key) {
@@ -641,6 +795,8 @@ class Cell {
 function mdSlotValueStore( me, slotName, value) {
     // me[slotName] = value; vestigial? todo clean up if so
 }
+
+
 
 // --- some handy cell factories -------------------
 
@@ -693,32 +849,9 @@ function cIe(value, options) {
         , options);
 }
 function obsDbg (name, me, newv, priorv, c) {
-    console.log(`obsDbg! ${name} ${me.name} ${newv}`);
+    console.log(`obsDbg! ${name} ${me? me.name:'noMd'} ${newv}`);
 //    console.log(`OBS: ${name} now ${newv} (was ${priorv})`);
 }
 function XobsDbg (name, me, newv, priorv, c) {
     // handy way to hush obsDbg until sure not needed
 }
-//module.exports.Cell = Cell;
-//module.exports.cIe = cIe;
-//module.exports.cF = cF;
-//module.exports.cFI = cFI;
-//module.exports.cF1 = cF1;
-//module.exports.cF_ = cF_;
-//module.exports.c_F = c_F;
-//module.exports.cI = cI;
-//module.exports.obsDbg = obsDbg;
-//module.exports.kValid = kValid;
-//module.exports.kUnbound = kUnbound;
-//module.exports.kOptimizeWhenValued = kOptimizeWhenValued;
-//module.exports.kOnceAsked = kOnceAsked;
-//module.exports.kUntilAsked = kUntilAsked;
-//module.exports.kAlways = kAlways;
-//module.exports.find = find;
-//module.exports.cellsReset = cellsReset;
-//
-//module.exports.withIntegrity = withIntegrity;
-//module.exports.withChg = withChg;
-//module.exports.qNotify = qNotify;
-//module.exports.qAwaken = qAwaken;
-//module.exports.qEphemReset = qEphemReset;
