@@ -1,5 +1,6 @@
 /* global Tag TagEvents CommonCSSPropertiesJS */
-const TagAttributesGlobal =  new Set(['accesskey','class','contenteditable','contextmenu','dir'
+const TagAttributesGlobal =  new Set(['accesskey','autofocus','class','contenteditable'
+    ,'contextmenu','dir'
     ,'draggable','dropzone','hidden','id','itemid','itemprop','itemref','itemscope'
     ,'itemtype','lang','spellcheck','style','tabindex','title','translate']);
 
@@ -109,14 +110,21 @@ function tagAttrsBuild(md) {
         if (md.hasOwnProperty(prop)) {
             if (TagEvents.has(prop)) {
                 //clg('bingo event!!!!!!!!!! '+prop);
-                attrs += `${prop}="${md[prop]}(this, event)"`;
+                attrs += ` ${prop}="${md[prop]}(this, event)"`;
             } else {
                 switch (prop) {
-                    case 'disabled': // a very weird attribute
+                    case 'disabled':
+                    case 'autofocus': // booleans can standalone weird
                         if (md[prop]) {
-                            attrs += ' disabled';
+                            attrs += ` ${prop}`;
                         }
+                        break;                        
+                    case 'value': // todo make tagSpecificAttrs a class attribute of appropriate tags
+                        attrs += ` ${prop}="${md[prop]}"`;
                         break;
+                    case 'placeholder': // todo make tagSpecificAttrs a class attribute of appropriate tags
+                        attrs += ` ${prop}="${md[prop]}"`;
+                        break;                        
                 }
             }
         }
@@ -141,8 +149,6 @@ function tagStyleBuild(md) {
     return ss===''? '' : ` style="${ss}"`;
 }
 
-
-
 function tag( tag, initargs, parent) {
     //clg(`tag ${tag} sees parent `+parent);
     return mkm( parent, null // todo fully lose this idea of supplying id initargs.id
@@ -152,16 +158,11 @@ function tag( tag, initargs, parent) {
             , Tag);
 }
 
+function div(initargs, parent) {
+    return tag('div', initargs, parent);
+}
 function h1(content, initargs, parent) {
     return tag('h1', Object.assign( {content: content}, initargs), parent);
-}
-
-
-function label(content, initargs, parent) {
-    return tag('label', Object.assign( {content: content}, initargs), parent);
-}
-function div(content, initargs, parent) {
-    return tag('div', Object.assign( {content: content}, initargs), parent);
 }
 function h2(content, initargs, parent) {
     return tag('h2', Object.assign( {content: content}, initargs), parent);
@@ -178,6 +179,12 @@ function h5(content, initargs, parent) {
 function h6(content, initargs, parent) {
     return tag('h6', Object.assign( {content: content}, initargs), parent);
 }
+function label(content, initargs, parent) {
+    return tag('label', Object.assign( {content: content}, initargs), parent);
+}
 function button(content, initargs, parent) {
     return tag('button', Object.assign( {content: content}, initargs), parent);
+}
+function input(initargs, parent) {
+    return tag('input', initargs, parent);
 }

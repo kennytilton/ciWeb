@@ -40,19 +40,6 @@ function obsKids (slot, md, newv, oldv, c) {
         let oldk = oldv[kx];
         if (!find( oldk, newv)) {
             let kdom = oldk.creDom || document.getElementById(oldk.id);
-            //, opar = oldk.dom.parentNode
-            //, obpar =bid.parentNode;
-            /*clg('bid!!!!!!!!!!!!!!!!!');
-            clg(bid);
-            clg(`old by id match ${bid===oldk.dom}`);
-            clg(`par match ${opar === md.dom}`);
-            clg(`gpar match ${opar.parentNode === md.dom}`);
-            clg(`opar unknown ?!!!! ${opar}`);
-            clg(`kpars match ${opar===obpar}`);
-            clg(`par ${md.id} dropping ${oldk.id}`);*/
-            
-            // NG md.dom.removeChild(bid);
-            // OK bid.parentNode.removeChild(bid);
             kdom.parentNode.removeChild(kdom);
         }
     }
@@ -66,7 +53,7 @@ function obsKids (slot, md, newv, oldv, c) {
             newk.creDom = newtag; // will be parent of newk.dom!!
             // clg(`par ${md.id} gets newk!! ${newk.id} = `+newh);
             //clg(`newk!!! ${typeof newk} ${newk instanceof Goog} `+newk.name);
-            if (newk instanceof Goog) {
+            if (typeof Goog !== 'undefined' && newk instanceof Goog) {
                 let g = new newk.gFactory();
                 g.create(newtag);
                 g.id = newk.id;
@@ -74,6 +61,7 @@ function obsKids (slot, md, newv, oldv, c) {
                 // check that datepicker found by ID
             } else {
                 newtag.innerHTML = newk.toHTML()
+                // todo try replacing newtag with its only child
             }
 
             if (priork === null) {
@@ -153,7 +141,7 @@ class Tag extends Model {
         return `<${tag} id="${this.id}" ${attrs}>${this.content || this.kidsToHTML()}</${tag}>`;
     }
     kidsToHTML() {
-        return this.kids.reduce((pv, kid)=>{ return pv+kid.toHTML();},'');
+        return this.kids? this.kids.reduce((pv, kid)=>{ return pv+kid.toHTML();},''):'';
     }
     slotObserverResolve(slot) {
         let obs = this.slotObservers[slot];
