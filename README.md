@@ -1,27 +1,21 @@
 # ciWeb
-A pure JS web application framework thinly wrapping HTML and CSS, with Cells Inside(tm).
+Welcome to ciWeb, a lightweight but powerful JS web development framework with Cells Inside(tm). Hence the "ci".
 
-Cells Inside(tm) is actually just [jCells](https://github.com/kennytilton/jCells). jCells is databinding on steroids, transparent unto the magical. This deprecated repo has [the best intro](https://github.com/kennytilton/its-alive), I think. (Do not worry, the syntax is more magical in JS than CLJS thanks to JS property getters and setters.)
+[Cells](https://github.com/kennytilton/cells) is a mature, largely transparent databinding library that began in 1996 as a Common Lisp library and has since been ported to Clojure/ClojureScript as [Rube](https://github.com/kennytilton/rube) and now Javascript as [jCells](https://github.com/kennytilton/jCells). It has been used to drive application development frameworks wrapping Macintosh [QuickDraw](https://en.wikipedia.org/wiki/QuickDraw), Windows GDT, Tcl/Tk as [Celtk](https://github.com/kennytilton/celtk), OpenGL (you read that correctly) as [Cello](https://github.com/kennytilton/Cello), Gtk as [Cells-Gtk](https://github.com/Ramarren/cells-gtk3), qooxdoo as [qooxlisp](https://github.com/kennytilton/qooxlisp), and qooxdoo mobile as [Qxia](https://github.com/kennytilton/qxia).
 
-ciWeb, again, involves nothing but HTML and CSS. And jCells, but that is no harder to learn than VisiCalc. Look it up. I have done this before in MCL, Windows GDK, Tcl/Tk, OpenGL, qooxdoo and qooxdoo mobile so it should go -- er, has gone -- well, especially since the HTML and CSS will be your problem. I mean that in a good way.
+ciWeb will involve nothing but HTML thinky wrapped, CSS and jCells. Then we do ciGoog to wrap Goodle Closure and ciQx to wrap qooxdoo on the client side (qooxlisp drove qooxdoo from the server). Not necessarily in that order.
 
-ciWeb is different from most frameworks: it works inside out instead of outside in.
+## Getting Acquainted
+Before we dig into the magic of Cells and the nitty-gritty of ciWeb, the reader might want to just follow along as I evolve a trivial bit of web work. After that we will get acquainted with Cells. They might make more sense after you have seen how they are applied.
 
-With other frameworks one effectively must learn a new computer language. One also ends up with a tool chain to convert the outer framework source into runnable HTML/JS. And, in the case of ReactJs, it also means learning JSX. And because ReactJS makes information so hard to share, one ends up adding Flux to manage state. But Flux itself gets crazy with multiple stores, so enter Redux, another language to master.
-
-You just wanted to put up a web page, right?
-
-With ciWeb we simply have a runtime JS library that looks and works like HTML (and CSS is unchanged). Inside we have the jCells dataflow driving conventional HTML, CSS, and AJAX (HCA) which methinks will turn out to be fine tools once harnassed transparently enough that we think we are just doing HCA while successfully building a web app. 
-
-That paragraph needs work. What I mean is, yeah, HTML is a PITA when coded by hand, but wrap it thinly in JS objects which map isomorphically onto HTML tags and throw in transparent dataflow and Shazzam! More power for a tenth the effort than outside-in contorted frameworks.
-
-Nice bonus with ciWeb: graphic designers likely will be able to program it themselves. (It will be easier than CSS.) I like the idea of kids in school learning programming this way*, too.
-
-* But a deep dive will be needed (by moiself or a contributor) on CSS to help non-designers have fun with ciWeb. 
-
-Next up might be ciQx with my old friend [qooxdoo](http://www.qooxdoo.org/), a superb JS library. Check out my qooxlisp and [Qxia](https://github.com/kennytilton/qxia/wiki) repos to see how Cells can eliminate a lot of the coding qooxdoo requires.
-
-ciWeb is now past "proof of concept" and ready for elaboration, with a bit of AJAX back to the server I think.
-
-Stand back, Buenos Aires!
+### Step 1 - Launching the demo
+Navigate to ciWeb/js/Sources/public and open index.html in your browser. n.b, It does not do anything interesting yet. Make sure I left the body as this in my last commit:
+````
+<body>
+    <h1>Script failed to load.</h1>
+    <p>Please check the console for diagnostics.</p>
+    <script>hilitedError_0();</script>
+</body>
+````
+## To be continued (bi-hourly, on 19-September-2016)
 
