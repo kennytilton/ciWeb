@@ -115,12 +115,48 @@ The only new bits are at the end, two new properties `userError` and `color` on 
  * the argument to our formula will be the Cell object, which knows inter alia the JS object (aka "model", alias "md") whose property it mediates. We call this parameter `c`, and the JS object is `c.md`.
  * our computed `userError` is not very informative just yet, merely `true` or `false`.
  * our algorithm to compute `color` is straightforward
+
 But that is the boring stuff. Here is the fun stuff:
  * as the JS property `color` changes the DOM text color changes because ciWeb has built-in observers that pipe JS object state changes to their associated DOM elements; and
  * no visible wiring is needed to arrange for a formula to be run. The `userError` formula simply reads the `val` property, and the `color` property simply reads the `userError` property, and dependencies are established. (Much more on this when we get serious about you coding Cells.)
+
 OK, not bad, but our curious engineer wanted to see dataflow between objects and above we just have simple dataflow between properties of the input element. Baby steps.
 ### No object is an island
+Please now modify the script tag to invoke `hilitedError_3`, reload, and again give Mom a shout-out, "Hi, Mom!". One small difference for our page...:
 
-#### To be continued (hourly on 19-September-2016)
+![hilitedError_0 pageshot](https://github.com/kennytilton/ciWeb/blob/master/public/image/hilitedError_0.png)
+
+...one giant leap for dynamic web pages and better U/Xes. First, no big deal, a more helpful error:
+````
+    , userError: cF(c=>{
+        return (c.md.val.indexOf("!") === -1)? null:
+                "&lt;ahem&gt; No bangs, please.";
+    })    
+````
+but now the salient beef:
+````
+    , div( {margin:'9px'
+        , kids: cKids(c=>{
+            let uerr = c.fm('uname').userError;
+            return uerr ? [label(uerr)]:[];})})
+````
+We could just make the label visible when there is an error to be displayed (and in this case that would be preferable to avoid the elements jumping about) but the point is, we can dynamically alter the very population of our models/UIs as state changes, not just the properties of those models.
+
+OK, not too shabby, but have you noticed that "Register" button? It is always active! Terrible U/X of me.
+### What a Tangled Web We Weave...
+Let us move on to our final version, modifying the script tag to invoke our final version, simply `hilitedError`. Now the "Register" button is disabled if the Username is blank or faulty. The code looks like this:
+````
+    , button("Register", {
+        disabled: cF(c=>{let unm = c.fm('uname');
+                    return (unm.val.length===0) || unm.userError
+                    ;})
+        , onclick: "(function () {alert('Registering!!');})"})
+````
+Two points of information in re the above:
+ * until the user has typed something, the second test for an error will be short-circuited by the behavior of `or`, and no dependency will be establised on the `userError` property; and
+ * another approach here would be to have the userError formula generate an error "Username cannot be blank." and then the U/X will not mysteriously be refusing to enable the "Register" button; we can let them hit it and then explain the problem. 
+
+### Snappy summary
+After my siesta.
 
 
