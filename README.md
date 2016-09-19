@@ -1,14 +1,21 @@
 # ciWeb
 Welcome to ciWeb, a lightweight but powerful JS web development framework with Cells Inside(tm). Hence the "ci".
 
+#### Our chops
 [Cells](https://github.com/kennytilton/cells) is a mature, largely transparent databinding library that began in 1996 as a Common Lisp library and has since been ported to Clojure/ClojureScript as [Rube](https://github.com/kennytilton/rube) and now Javascript as [jCells](https://github.com/kennytilton/jCells). It has been used to drive application development frameworks wrapping Macintosh [QuickDraw](https://en.wikipedia.org/wiki/QuickDraw), Windows GDT, Tcl/Tk as [Celtk](https://github.com/kennytilton/celtk), OpenGL (you read that correctly) as [Cello](https://github.com/kennytilton/Cello), Gtk as [Cells-Gtk](https://github.com/Ramarren/cells-gtk3), qooxdoo as [qooxlisp](https://github.com/kennytilton/qooxlisp), and qooxdoo mobile as [Qxia](https://github.com/kennytilton/qxia).
 
+#### Our roadmap
 ciWeb will involve nothing but HTML thinly wrapped, CSS and jCells. Then we do ciGoog to wrap Goodle Closure and ciQx to wrap qooxdoo on the client side (qooxlisp drove qooxdoo from the server). Not necessarily in that order.
 
-## Getting Acquainted
+#### The ciWeb Design Imperatives
+ * HTML and CSS shall be wrapped so thinly that we will not have to document anything other than the databinding. This will be [the doc](https://developer.mozilla.org/en-US/docs/Web/API) for the rest.
+ * No preprocessing. Stackless. Just Javascript and jCells (itself just JS).
+ * Transparent databinding, reaching across the entire application model, embracing model as well as view.
+ * Fast. Minimal DOM manipulation without diffing.
+#### Getting Acquainted
 Before we dig into the magic of Cells and the nitty-gritty of ciWeb, the reader might want to just follow along as I evolve a trivial bit of web work*. After that we will get acquainted with Cells. They might make more sense after you have seen how they are applied.
 
-* The idea for this exercise came from an engineer at a company I had approached for work. Along the way I got into a rant on Cells vs ReactJS and its problem with interdependency in a UI and he asked how I would use Cells to, oh, highlight something in red if the user violated some data entry rule. He offered specifically that an exclamation mark might be disallowed in some text entry field, so we wanted something to turn red if the user entered said character in said field. 
+> *The idea for this exercise came from an engineer at a company I had approached for work. Along the way I got into a rant on Cells vs ReactJS and its problem with interdependency in a UI and he asked how I would use Cells to, oh, highlight something in red if the user violated some data entry rule. He offered specifically that an exclamation mark might be disallowed in some text entry field, so we wanted something to turn red if the user entered said character in said field. 
 
 Let us build that.
 
