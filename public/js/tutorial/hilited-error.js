@@ -5,6 +5,8 @@
  *
  */
 
+/* global tag, obsDbg, jsDom */
+
 function hilitedError_0(hostId) {
     let jsDom =
         tag('section', {kids: cKids(c=> {
@@ -20,10 +22,20 @@ function hilitedError_0(hostId) {
                         onclick: "(function () {alert('Registering!!');})"})
                     ];
             })});
-
-    let ih = jsDom.toHTML();
+    /*
+     * In version _0 we will dump the HTML to the console for our
+     * amusement and demonstrate that ciWeb can inject mid-document'\
+     * if desired by specifying the Id of a dom element.
+     */
+    let ih = jsDom.toHTML()
+        , host = hostId? document.getElementById(hostId) : document.body;
     clg('innerhtml: '+ih);
-    document.body.innerHTML = ih;
+    
+    if (host) {
+        host.innerHTML = ih;
+    } else {
+        document.body.innerHTML = `<h4>Target DOM "${hostId}" not found.`;
+    }
 }
 
 function hilitedError_1(hostId) {
@@ -89,7 +101,7 @@ function hilitedError_3(hostId) {
                                             , {observer: obsDbg})
 
                                         , userError: cF(c=>{
-                                            return (c.md.val.indexOf("!") ==-1)? null:
+                                            return (c.md.val.indexOf("!") === -1)? null:
                                                     "&lt;ahem&gt; No bangs, please.";
                                         })                                        
                                         , color: cF(c=>{
@@ -123,7 +135,7 @@ function hilitedError(hostId) {
                                             , {observer: obsDbg})
 
                                         , userError: cF(c=>{
-                                            return (c.md.val.indexOf("!") ==-1)? null:
+                                            return (c.md.val.indexOf("!") === -1)? null:
                                                     "&lt;ahem&gt; No bangs, please.";
                                         })                                        
                                         , color: cF(c=>{
@@ -141,7 +153,7 @@ function hilitedError(hostId) {
                             return uerr ? [label(uerr)]:[];})})
                     , button("Register", {
                         disabled: cF(c=>{let unm = c.fm('uname');
-                                    return (unm.val.length==0) || unm.userError
+                                    return (unm.val.length===0) || unm.userError
                                     ;})
                         , onclick: "(function () {alert('Registering!!');})"})
                     ];

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-/* global kUnbound sid jsDom */
+/*global kUnbound sid jsDom */
 
 function obsContent (slot, md, newv, oldv, c) {
     if (oldv===kUnbound) return; // on awaken all HTML is assembled at once
