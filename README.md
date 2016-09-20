@@ -2,16 +2,16 @@
 Welcome to ciWeb, a lightweight but powerful JS web development framework with Cells Inside(tm). Hence the "ci".
 
 #### Our chops
-[Cells](https://github.com/kennytilton/cells) is a mature, largely transparent databinding library that began in 1996 as a Common Lisp library and has since been ported to Clojure/ClojureScript as [Rube](https://github.com/kennytilton/rube) and now Javascript as [jCells](https://github.com/kennytilton/jCells). It has been used to drive application development frameworks wrapping Macintosh [QuickDraw](https://en.wikipedia.org/wiki/QuickDraw), Windows GDT, Tcl/Tk as [Celtk](https://github.com/kennytilton/celtk), OpenGL (you read that correctly) as [Cello](https://github.com/kennytilton/Cello), Gtk as [Cells-Gtk](https://github.com/Ramarren/cells-gtk3), qooxdoo as [qooxlisp](https://github.com/kennytilton/qooxlisp), and qooxdoo mobile as [Qxia](https://github.com/kennytilton/qxia).
+We have done this before, and built enterprise applications this way. Here is [the latest](http://tiltonsalgebra.com/#).
 
-#### Our roadmap
-ciWeb will involve nothing but HTML thinly wrapped, CSS and jCells. Then we do ciGoog to wrap Goodle Closure and ciQx to wrap qooxdoo on the client side (qooxlisp drove qooxdoo from the server). Not necessarily in that order.
+[Cells](https://github.com/kennytilton/cells) is a mature, largely transparent databinding library that began in 1996 as a Common Lisp library and has since been ported to Clojure/ClojureScript as [Rube](https://github.com/kennytilton/rube) and now Javascript as [jCells](https://github.com/kennytilton/jCells). It has been used to drive application development frameworks wrapping Macintosh [QuickDraw](https://en.wikipedia.org/wiki/QuickDraw), Windows GDT, Tcl/Tk as [Celtk](https://github.com/kennytilton/celtk), OpenGL (you read that correctly) as [Cello](https://github.com/kennytilton/Cello), Gtk as [Cells-Gtk](https://github.com/Ramarren/cells-gtk3), qooxdoo as [qooxlisp](https://github.com/kennytilton/qooxlisp), and qooxdoo mobile as [Qxia](https://github.com/kennytilton/qxia).
 
 #### The ciWeb Design Imperatives
  * HTML and CSS shall be wrapped so thinly that we will not have to document anything other than the databinding. This will be [the doc](https://developer.mozilla.org/en-US/docs/Web/API) for the rest;
  * no preprocessing. Stackless. Just Javascript and jCells (itself just JS);
- * transparent databinding, reaching across the entire application model, embracing model as well as view, indeed rejecting the distinction; and
- * fast. The theoretical minimum of DOM manipulation, without diffing.
+ * transparent databinding, reaching across the entire application model, embracing model as well as view, indeed rejecting the distinction; 
+ * declarative and dynamic (thanks to the formulaic databinding); and
+ * fast, with the theoretical minimum of DOM manipulation, without the diffing.
 
 #### Getting Acquainted
 Before we dig into the magic of Cells and the nitty-gritty of ciWeb, the reader might want to just follow along as I evolve a trivial bit of web work*. After that we will get acquainted with Cells. They might make more sense after you have seen how they are applied.
@@ -23,15 +23,17 @@ Let us build that.
 > The code for each iteration to come is [here](https://github.com/kennytilton/ciWeb/blob/master/public/js/tutorial/hilited-error.js), in functions named `hilitedError[_n]`. Please note that your author is new to hardcore JS and welcomes any edification the cognoscenti care to offer.
 
 ### Step 1 - Launching the demo
-FWIW, I develop with NetBeans, opening the ciWeb directory as a NetBeans project and testing with **Run Main Project** aka **F6** aka the little green triangle in the toolbar. You can also just navigate to `ciWeb/js/Sources/public` and open `index.html` in your browser. That should bring up a mildly functional:
+FWIW, I develop with NetBeans, opening the ciWeb directory as a NetBeans project and testing with **Run Main Project** aka **F6** aka the little green triangle in the toolbar. You can also just navigate to `ciWeb/js/Sources/public` and open `index.html` in your browser, but then you will need to edit the index.html to switch between itertaions.
+
+Launching index.html should bring up a mildly functional:
 
 ![hilitedError_0 pageshot](https://github.com/kennytilton/ciWeb/blob/master/public/image/hilitedError_0.png)
 
-If you see something else, I probably committed index.html with a later script operational. The script tag in the body should invoke `hilitedError_0`:
+If you see something else, I probably committed index.html with a later script operational. The script tag in the body should invoke `hilitedError_0` and look like this:
 ````
 <script>hilitedError_0();</script>`.
 ````
-Let us take a look at the (lightly massaged) code behind that mini-page:
+Let us take a look at the code behind that mini-page:
 ````
     let jsDom =
         tag('section', {kids: cKids(c=> {
@@ -51,7 +53,7 @@ Let us take a look at the (lightly massaged) code behind that mini-page:
 ````
 
 The only things to note here are:
- * functions such as `h1`, `div` and `input` and properties such as `margin` and `onclick` do their best to make ciWeb seem like HTML, said impersonation being one of ciWeb's prime design principles. Each function aping a tag returns a JS object corresponding to a DOM element, each DOm-related property becomes a property of the JS object whose value will be passed along to the DOM element;
+ * functions such as `h1`, `div` and `input` and properties such as `margin` and `onclick` do their best to make ciWeb seem like HTML, said impersonation being one of ciWeb's prime design principles. Each function aping a tag returns a JS object corresponding to a DOM element, and each DOM-related property becomes a property of the JS object whose value will be passed along to the DOM element;
  * the generic generator `tag` (called directly by the dedicated functions) is used to generate the `section` tag; and
  * the `kids` property and `cKids` function, mechanisms by which we will be able to build Web pages that change shape as the user works. No need to dig into those yet, but that is what they do.
 
