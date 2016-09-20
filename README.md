@@ -150,9 +150,9 @@ but now the salient beef:
 [We could just make the label visible when there is an error to be displayed (and in this case that would be preferable to avoid the elements jumping about) but the point is, we can dynamically alter the very population of our models/UIs as state changes, not just the properties of those models.]
 
 ### All In the Family
-The sharp-eyed reader will have noticed the expression `c.fm('uname').userError`. You can read that as "search my extended family (hence `fm`) of objects for the nearest named 'uname' and read its `userError`". The idea is simple: for me to depend on a property of something else I must first track down the thing in which I am interested, then ask it for its property value. We will dig into the substantial "family" API as needed, but for now think "CSS selector"*, ie, a flexible way to reference other things by some quality so we are hard-coding things like "the second child of my parent's next sibling". 
+The sharp-eyed reader will have noticed the expression `c.fm('uname').userError`. You can read that as "search my extended family (hence `fm`) of objects for the nearest named 'uname' and read its `userError`". The idea is simple: for me to depend on a property of something else I must first track down the thing in which I am interested, then ask it for its property value. We will dig into the substantial "family" API as needed, but for now think "CSS selector"*, ie, a flexible way to reference other things by some quality so we are not hard-coding things like "the second child of my parent's next sibling". 
 
-* One could indeed use CSS selectors to locate DOM objects and their JS correlates to then dependently access Cell-mediated properties.
+* One could indeed use CSS selectors to locate DOM objects and their JS correlates to then dependently access Cell-mediated properties. It depends on the use case. For example, often I am writing code for a widget that will be spawned in groups, one per a list of data items. In that case, I want the widget of a given name or widget in my group so the search is outwards from myself to the first match.
 
 OK, not too shabby, but have you noticed that "Register" button? It is always active! Terrible U/X of me, I must say. Let us attend to that.
 ### What a Tangled Web We Weave...
