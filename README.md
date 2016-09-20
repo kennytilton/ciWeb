@@ -8,29 +8,22 @@ Welcome to ciWeb, a lightweight but powerful JS web development framework with C
 ciWeb will involve nothing but HTML thinly wrapped, CSS and jCells. Then we do ciGoog to wrap Goodle Closure and ciQx to wrap qooxdoo on the client side (qooxlisp drove qooxdoo from the server). Not necessarily in that order.
 
 #### The ciWeb Design Imperatives
- * HTML and CSS shall be wrapped so thinly that we will not have to document anything other than the databinding. This will be [the doc](https://developer.mozilla.org/en-US/docs/Web/API) for the rest.
- * No preprocessing. Stackless. Just Javascript and jCells (itself just JS).
- * Transparent databinding, reaching across the entire application model, embracing model as well as view.
- * Fast. Minimal DOM manipulation without diffing.
+ * HTML and CSS shall be wrapped so thinly that we will not have to document anything other than the databinding. This will be [the doc](https://developer.mozilla.org/en-US/docs/Web/API) for the rest;
+ * no preprocessing. Stackless. Just Javascript and jCells (itself just JS);
+ * transparent databinding, reaching across the entire application model, embracing model as well as view, indeed rejecting the distinction; and
+ * fast. The theoretical minimum of DOM manipulation, without diffing.
+
 #### Getting Acquainted
 Before we dig into the magic of Cells and the nitty-gritty of ciWeb, the reader might want to just follow along as I evolve a trivial bit of web work*. After that we will get acquainted with Cells. They might make more sense after you have seen how they are applied.
 
 > *The idea for this exercise came from an engineer at a company I had approached for work. Along the way I got into a rant on Cells vs ReactJS and its problem with interdependency in a UI and he asked how I would use Cells to, oh, highlight something in red if the user violated some data entry rule. He offered specifically that an exclamation mark might be disallowed in some text entry field, so we wanted something to turn red if the user entered said character in said field. 
 
-Let us build that.
+Let us build that. 
+
+> The code for each iteration to come is [here](https://github.com/kennytilton/ciWeb/blob/master/public/js/tutorial/hilited-error.js), in functions named `hilitedError[_n]`. Please note that your author is new to hardcore JS and welcomes any edification the cognoscenti care to offer.
 
 ### Step 1 - Launching the demo
-FWIW, I develop with NetBeans, opening the ciWeb directory as a NetBeans project and testing with **Run Main Project** aka **F6** aka the little green triangle in the toolbar. You can also just navigate to `ciWeb/js/Sources/public` and open `index.html` in your browser. 
-
-n.b, It does not do anything interesting yet.
-````
-    <body>
-        <h1>Script failed to load.</h1>
-        <p>Please check the console for diagnostics.</p>
-        <script>hilitedError_0();</script>
-    </body>
-````
-That should bring up a mildly functional:
+FWIW, I develop with NetBeans, opening the ciWeb directory as a NetBeans project and testing with **Run Main Project** aka **F6** aka the little green triangle in the toolbar. You can also just navigate to `ciWeb/js/Sources/public` and open `index.html` in your browser. That should bring up a mildly functional:
 
 ![hilitedError_0 pageshot](https://github.com/kennytilton/ciWeb/blob/master/public/image/hilitedError_0.png)
 
@@ -58,8 +51,9 @@ Let us take a look at the (lightly massaged) code behind that mini-page:
 ````
 
 The only things to note here are:
- * Functions such as `h1`, `div` and `input` and properties such as `margin` and `onclick` do their best to make ciWeb seem like HTML, said impersonation being one of ciWeb's prime design principles. Each function aping a tag returns a JS object corresponding to a DOM element, each DOm-related property becomes a property of the JS object whose value will be passed along to the DOM element.
- * The `kids` property and `cKids` function, the mechanism by which we will be able to build Web pages that change shape as the user works. No need to dig into those yet, but that is what they do.
+ * functions such as `h1`, `div` and `input` and properties such as `margin` and `onclick` do their best to make ciWeb seem like HTML, said impersonation being one of ciWeb's prime design principles. Each function aping a tag returns a JS object corresponding to a DOM element, each DOm-related property becomes a property of the JS object whose value will be passed along to the DOM element;
+ * the generic generator `tag` (called directly by the dedicated functions) is used to generate the `section` tag; and
+ * the `kids` property and `cKids` function, mechanisms by which we will be able to build Web pages that change shape as the user works. No need to dig into those yet, but that is what they do.
 
 ### It's (barely) alive!
 Now let us look at the barest minimum of dataflow. Modify the script tag in `index.html` body to call `errorHilite_1`, reload, and have your console open as you type a username. You should see something like this if you type "Ken":
@@ -82,7 +76,8 @@ tag('section', {kids: cKids(c=> {
                         , input({ val: cI(""
                                     // use debug observer to confirm the action
                                     , {observer: obsDbg})
-                                , oninput: 'unameGlue'                                        , margin: '6px'
+                                , oninput: 'unameGlue'
+                                , margin: '6px'
                                 , autofocus: true
                                 , placeholder: "No bangs, please."})
                         ];
@@ -128,13 +123,13 @@ The only new bits are at the end, two new properties `userError` and `color` on 
 
 But that is the boring stuff. Here is the fun stuff:
  * as the JS property `color` changes the DOM text color changes because ciWeb has built-in observers that pipe JS object state changes to their associated DOM elements; and
- * no visible wiring is needed to arrange for a formula to be run. The `userError` formula simply reads the `val` property, and the `color` property simply reads the `userError` property, and dependencies are established. (Much more on this when we get serious about you coding Cells.) Looking back at `unameGlue`, the simple assignment `md.val = dom.value` suffices to kick off a cascade of dataflow.
+ * no visible wiring is needed to arrange for a formula to be run. The `userError` formula simply reads the `val` property, the `color` property simply reads the `userError` property, and dependencies are established. We did not harp on it at the time, but looking back at `unameGlue`, the simple assignment `md.val = dom.value` suffices to kick off a cascade of dataflow.
 
 OK, not bad, but our curious engineer wanted to see dataflow between objects and above we just have simple dataflow between properties of the input element. Baby steps.
 ### No object is an island
 Please now modify the script tag to invoke `hilitedError_3`, reload, and again give Mom a shout-out, "Hi, Mom!". That's one small difference for our page...:
 
-![hilitedError_0 pageshot](https://github.com/kennytilton/ciWeb/blob/master/public/image/hilitedError_0.png)
+![hilitedError_0 pageshot](https://github.com/kennytilton/ciWeb/blob/master/public/image/hilitedError_3.png)
 
 ...one giant leap for dynamic web pages and better U/Xes. 
 
@@ -154,10 +149,10 @@ but now the salient beef:
 ````
 [We could just make the label visible when there is an error to be displayed (and in this case that would be preferable to avoid the elements jumping about) but the point is, we can dynamically alter the very population of our models/UIs as state changes, not just the properties of those models.]
 
-#### All In the Family
-The sharp-eyed reader will have noticed the expression `c.fm('uname').userError`. You can read that as "search my extended family (hence `fm`) of objects for the nearest named 'uname' and read its `userError`". The idea is simple: for me to depend on a property of something else I must first track down the thing in which I am interested, then ask it for its property value. We will dig into the substantial "family" API as needed, but for now think "CSS selector"*, ie, a flexible way to reference other things by some quality so we are hard-coding things like "the second child of my parent's next sibling". 
+### All In the Family
+The sharp-eyed reader will have noticed the expression `c.fm('uname').userError`. You can read that as "search my extended family (hence `fm`) of objects for the nearest named 'uname' and read its `userError`". The idea is simple: for me to depend on a property of something else I must first track down the thing in which I am interested, then ask it for its property value. We will dig into the substantial "family" API as needed, but for now think "CSS selector"*, ie, a flexible way to reference other things by some quality so we are not hard-coding things like "the second child of my parent's next sibling". 
 
-* One could indeed use CSS selectors to locate DOM objects and their JS correlates to then dependently access Cell-mediated properties.
+* One could indeed use CSS selectors to locate DOM objects and their JS correlates to then dependently access Cell-mediated properties. It depends on the use case. For example, often I am writing code for a widget that will be spawned in groups, one per a list of data items. In that case, I want the widget of a given name or widget in my group so the search is outwards from myself to the first match.
 
 OK, not too shabby, but have you noticed that "Register" button? It is always active! Terrible U/X of me, I must say. Let us attend to that.
 ### What a Tangled Web We Weave...
@@ -176,7 +171,12 @@ There is, methinks, quite a moral or two here:
  * even simple examples naturally lead to dependency upon dependency, and they do so exponentially as our UIs become richer: the more elements we have, the more likely it is they will need to cooperate;
  * when state dependency is easily expressed, U/X niceties are easily implemented and more likely to be delivered.
 
-### Snappy summary
+### Summary
+With no tooling or preprocessing we have full access to anything a browser can do (via untrammeled access to HTML and CSS) in a pure JS framework extended by mostly transparent databinding. The fine granularity of the dependency tracking behind said databinding lets us update the DOM minimally, without diffing. 
+
+More importantly, the databinding provides a declarative paradigm that decomposes the complexity of sophisticated UIs such that the usual exponential explosion of state dependency remains linear. U/X designers and developers move from struggling to express trivial interactions to implementation as trivial and fast. We build better apps, and bring Web app development within the reach of graphic designers.
+
+Lets go for beers.
 
 
 
